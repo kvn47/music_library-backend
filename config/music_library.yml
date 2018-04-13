@@ -1,0 +1,11 @@
+defaults: &defaults
+  library_path: '/Users/vova/Music'
+
+development:
+  <<: *defaults
+
+production:
+  <<: *defaults
+
+test:
+  <<: *defaults
