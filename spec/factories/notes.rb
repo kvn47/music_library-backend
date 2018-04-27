@@ -16,12 +16,18 @@
 
 FactoryBot.define do
   factory :note do
-    type ""
-    artist "MyString"
-    album "MyString"
-    download_url "MyString"
-    download_path "MyString"
-    release_date "2018-01-17"
+    kind 'listen'
+    sequence(:artist) { |n| "Artist #{n}" }
+    sequence(:album) { |n| "Album #{n}" }
     details "MyText"
+
+    trait :download do
+      download_url "MyString"
+      download_path "MyString"
+    end
+
+    trait :await do
+      release_date "2018-01-17"
+    end
   end
 end
