@@ -15,7 +15,6 @@ class ApplicationController < ActionController::API
 
   def represent(representer_class, model = nil)
     model ||= @model
-    logger.debug "Model is #{model}"
     render json: representer_class.new(model).to_json
   end
 
