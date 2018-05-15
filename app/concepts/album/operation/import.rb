@@ -17,9 +17,11 @@ class Album::Import < BaseOperation
   def artist!(options, params:, **)
     dst = params[:destination]
     name = params[:artist]
-    artist = Artist.find_or_initialize_by name: name do |a|
+
+    artist = Artist.find_or_initialize_by(name: name) do |a|
       a.path = File.join dst, a.name
     end
+
     options['artist'] = artist
     true
   end

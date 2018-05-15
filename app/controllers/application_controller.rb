@@ -2,14 +2,14 @@ class ApplicationController < ActionController::API
   include Trailblazer::Rails::Controller
   # protect_from_forgery with: :exceptiosn
 
-  # def run(operation)
-  #   result = operation.(params: params)
-  #   @model = result[:model]
-  #
-  #   yield(result) if result.success? && block_given?
-  #
-  #   @_result = result
-  # end
+  def run(operation)
+    result = operation.(params: params.to_unsafe_hash)
+    @model = result[:model]
+
+    yield(result) if result.success? && block_given?
+
+    @_result = result
+  end
 
   private
 
