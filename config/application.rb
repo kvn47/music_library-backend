@@ -37,5 +37,8 @@ module MusicLibrary
     config.api_only = true
     config.time_zone = ENV.fetch('TIME_ZONE', 'UTC')
     config.i18n.default_locale = :ru
+
+    # action_controller.parameters_config
+    config.action_controller.permit_all_parameters
   end
 end

@@ -5,7 +5,9 @@ require 'shellwords'
 
 class Album::Import < BaseOperation
   # TODO: add contract
-
+  # step Contract.Build(constant: Album::Contract::Import)
+  # step Contract.Validate
+  # failure :contract_invalid!
   step :artist!
   step :album!
   failure :album_exists!
@@ -15,8 +17,8 @@ class Album::Import < BaseOperation
   private
 
   def artist!(options, params:, **)
-    dst = params[:destination]
     name = params[:artist]
+    dst = MusicLibrary.config[:library_path]
 
     artist = Artist.find_or_initialize_by(name: name) do |a|
       a.path = File.join dst, a.name
@@ -38,7 +40,7 @@ class Album::Import < BaseOperation
   end
 
   def tracks!(_, album:, params:, **)
-    params[:tracks].keep_if { |t| t[:checked] }.each do |track_params|
+    params[:tracks].each do |track_params|
       track = copy_track track_params, album
       album.tracks << track
     end
@@ -58,8 +60,8 @@ class Album::Import < BaseOperation
     ext = File.extname src_path
     number = format '%02d', track.number
     path = File.join album.path, "#{number} - #{track.title}#{ext}"
+    Rails.logger.info "Copy #{src_path} to #{path}"
     FileUtils.copy_file src_path, path
-    # `cp #{Shellwords.escape(src_path)} #{Shellwords.escape(path)}`
     track.path = path
     update_tags track
     track
