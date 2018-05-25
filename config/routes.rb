@@ -22,10 +22,11 @@ Rails.application.routes.draw do
     end
 
     resources :notes
+    resource :import, only: %i[new create]
     get :settings, to: 'settings#index'
     patch :settings, to: 'settings#update'
     put :library, to: 'library#update'
-    post :import, to: 'import#create'
-    post 'import/prepare', to: 'import#prepare'
+    # post :import, to: 'import#create'
+    # post 'import/prepare', to: 'import#prepare'
   end
 end

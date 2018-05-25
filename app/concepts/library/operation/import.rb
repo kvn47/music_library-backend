@@ -8,7 +8,7 @@ class Library::Import < BaseOperation
   def process!(options, params:, **)
     results = {}
 
-    params[:albums].each do |album_params|
+    params['albums'].each do |album_params|
       result = Album::Import.({params: album_params}, options)
       results.store album_params[:title],
                     result: result.success? ? 'success' : 'failure',

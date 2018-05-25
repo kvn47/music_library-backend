@@ -1,23 +1,26 @@
 require 'taglib'
 require 'shellwords'
 
-class Library::PrepareImport < BaseOperation
-  # TODO: add contract
+class PrepareImport
+  include Dry::Transaction
 
-  step :split_files
-  step :get_files
-  # step :prepare_files
-  step :get_tracks_info
-  step :find_cover
-  step :set_albums
+  check :validate
+  tee :split_files
+  step :collect_files
+  map :get_tracks_info
+  map :find_cover
+  step :assemble_albums
 
   private
 
   AlbumInfo = Struct.new :artist, :title, :year, :cover, :tracks
   TrackInfo = Struct.new :artist, :album, :year, :number, :title, :genre, :path
 
-  def split_files(options, params:, **)
-    path = params[:path]
+  def validate(path:, **)
+    Dir.exist? path
+  end
+
+  def split_files(path:, **)
     Dir.chdir path
 
     Dir['*.{flac,ape}'].each_with_index do |file_name, i|
@@ -36,25 +39,29 @@ class Library::PrepareImport < BaseOperation
     end
   end
 
-  def get_files(options, params:, **)
-    path = params[:path]
+  def collect_files(input)
+    path = input[:path]
     Dir.chdir path
-    files_pattern = 'track-*.flac'
+    tracks_pattern = 'track-*.flac'
 
-    files_pattern = '*.{flac,ape}' if Dir[files_pattern].none?
+    tracks_pattern = '*.{flac,ape}' if Dir[tracks_pattern].none?
 
-    files = Dir[files_pattern].map { |f| File.join path, f }
-    options['files'] = files
-    true
+    files = Dir[tracks_pattern].map { |f| File.join path, f }
+
+    if files.any?
+      Success input.merge(files: files)
+    else
+      Failure :files_not_found
+    end
   end
 
-  def get_tracks_info(options, params:, files:, **)
+  def get_tracks_info(input)
     tracks = []
-    path = params[:path]
 
-    files.each do |file|
+    input[:files].each do |file|
       info = {path: file}
       ext = File.extname file
+
       if ext == '.flac'
         TagLib::FLAC::File.open(file) do |ref|
           tag = ref.xiph_comment || ref.tag
@@ -65,11 +72,10 @@ class Library::PrepareImport < BaseOperation
             info[:number] = tag.track
             info[:title] = tag.title
             info[:genre] = tag.genre
-            # info[:path] = path
           end
         end
       else
-        TagLib::FileRef.open(path) do |ref|
+        TagLib::FileRef.open(input[:path]) do |ref|
           unless ref.null?
             tag = ref.tag
             info[:artist] = tag.artist
@@ -81,27 +87,26 @@ class Library::PrepareImport < BaseOperation
           end
         end
       end
+
       tracks << TrackInfo.new(info[:artist], info[:album], info[:year],
                               info[:number], info[:title], info[:genre], info[:path])
     end
 
-    options['tracks'] = tracks
-    true
+    input.merge tracks: tracks
   end
 
-  def find_cover(options, params:, **)
-    images = Dir.glob('*.{jpg,jpeg,png}', base: params[:path])
-    options['cover'] = File.join(params[:path], images.first) if images.any?
-    true
+  def find_cover(input)
+    images = Dir.glob('*.{jpg,jpeg,png}', base: input[:path])
+    input.store :cover, File.join(input[:path], images.first) if images.any?
+    input
   end
 
-  def set_albums(options, tracks:, cover:, **)
-    albums = []
-    tracks.group_by(&:album).each do |album, tracks|
+  def assemble_albums(input)
+    albums = input[:tracks].group_by(&:album).map do |album, tracks|
       track = tracks.first
-      albums << AlbumInfo.new(track.artist, album, track.year, cover, tracks)
+      AlbumInfo.new track.artist, album, track.year, input[:cover], tracks
     end
-    options['model'] = albums.to_json
-    true
+
+    Success(albums: albums.to_json)
   end
 end
