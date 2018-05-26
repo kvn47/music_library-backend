@@ -104,9 +104,10 @@ class PrepareImport
   def assemble_albums(input)
     albums = input[:tracks].group_by(&:album).map do |album, tracks|
       track = tracks.first
-      AlbumInfo.new track.artist, album, track.year, input[:cover], tracks
+      # AlbumInfo.new track.artist, album, track.year, input[:cover], tracks
+      {artist: track.artist, title: album, year: track.year, cover: input[:cover], tracks: tracks.map(&:to_h)}
     end
 
-    Success(albums: albums.to_json)
+    Success albums
   end
 end

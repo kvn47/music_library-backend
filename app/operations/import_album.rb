@@ -10,7 +10,7 @@ class ImportAlbum
   step :persist
 
   def artist!(input)
-    name = params[:artist]
+    name = input[:artist]
     dst = MusicLibrary.config[:library_path]
 
     artist = Artist.find_or_initialize_by(name: name) do |a|

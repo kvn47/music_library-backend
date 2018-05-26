@@ -1,7 +1,7 @@
 class SettingsController < ApplicationController
 
   def index
-    render json: {library_path: MusicLibrary.config[:library_path]}
+    render json: MusicLibrary.config
   end
 
   def update

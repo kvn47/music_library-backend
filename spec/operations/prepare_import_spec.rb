@@ -1,10 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe PrepareImport do
-  let(:source_path) { '' }
-
-  it 'returns albums with tracks' do
-    result = subject.(path: source_path)
-    expect(result).to include_json([])
+RSpec.describe PrepareImport, :import do
+  it 'returns albums' do
+    albums = subject.(path: import_source).value
+    expect(albums).to include(a_collection_including(:artist, :title, :tracks))
   end
 end
