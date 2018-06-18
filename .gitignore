@@ -26,3 +26,5 @@
 /config/master.key
 
 /spec/examples.txt
+
+.env.production
