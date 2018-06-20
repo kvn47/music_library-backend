@@ -1,9 +1,7 @@
 defaults: &defaults
   library_path: '/Users/vova/Music/Library'
   import_sources:
-    - '/Users/vova/Music'
-    - '/Users/vova/Public'
-    - '/Users/vova/mnt'
+    - '/Users/vova'
 
 development:
   <<: *defaults
