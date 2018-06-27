@@ -1,5 +1,5 @@
 defaults: &defaults
-  library_path: '/Users/vova/Music/Library'
+  library_path: '/Users/vova/Music'
   import_sources:
     - '/Users/vova'
 

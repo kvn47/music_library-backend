@@ -18,7 +18,7 @@ class Album < ApplicationRecord
   belongs_to :artist, optional: true
   has_many :tracks, dependent: :destroy
   delegate :name, to: :artist, prefix: true, allow_nil: true
-  # mount_uploader :cover, ImageUploader
+  mount_uploader :cover, ImageUploader
 
   def cover_thumb_url
     cover.thumb.url
