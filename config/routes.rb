@@ -10,14 +10,14 @@ Rails.application.routes.draw do
 
     resources :tracklists do
       post :add_tracks, on: :member
-      delete :remove_track, on: :member
-      delete :clear, on: :member
+      patch :remove_track, on: :member
+      patch :clear, on: :member
     end
 
     resources :export_lists do
       post :add, on: :member
-      delete :remove, on: :member
-      delete :clear, on: :member
+      patch :remove, on: :member
+      patch :clear, on: :member
       post :export, on: :member
     end
 

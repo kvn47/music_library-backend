@@ -7,7 +7,7 @@ class ExportList::Remove < BaseOperation
   step :message!
   failure :error!
 
-  def process!(*, model:, track:, **)
+  def process!(_, model:, track:, **)
     model.tracks.delete track
     model.update_size
   end
