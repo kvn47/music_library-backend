@@ -28,7 +28,7 @@ class Tracklist::AddTracks < BaseOperation
     options['tracks'] = [track]
   end
 
-  def add_tracks!(model:, tracks:, **)
+  def add_tracks!(_, model:, tracks:, **)
     tracks.each do |track|
       model.tracks << track
     end
