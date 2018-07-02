@@ -3,7 +3,7 @@ class ExportList::Export < BaseOperation
   step :process!
   step :result_message!
 
-  def process!(model:, params:, **)
+  def process!(_, model:, params:, **)
     destination_path = params['destination_path']
     return false if destination_path.blank?
 
