@@ -24,11 +24,17 @@ class PrepareImport
     Dir.chdir path
 
     Dir['*.{flac,ape}'].each_with_index do |file_name, i|
+      # Rails.logger.debug "file_name.start_with?('track-') => #{file_name.start_with?('track-')}"
+      next if file_name.match? '/ - \d+$/'
       file = File.join path, file_name
       cue_file = "#{file.chomp(File.extname(file))}.cue"
-      file_prefix = "track-#{i + 1}"
-      files_pattern = "#{file_prefix}*.flac"
+      file_prefix = "#{file_name} - #{i + 1}"
+      files_pattern = 'track-*.{flac|ape}'
 
+      # TODO: check
+      Rails.logger.debug "File.exist?(cue_file) => #{File.exist?(cue_file)}"
+      Rails.logger.debug "Dir[files_pattern] => #{Dir[files_pattern]}"
+      Rails.logger.debug "Dir[files_pattern].none? => #{Dir[files_pattern].none?}"
       if File.exist?(cue_file) && Dir[files_pattern].none?
         # Splitting tracks
         `cuebreakpoints #{Shellwords.escape cue_file} | shnsplit -a #{file_prefix} -o flac #{Shellwords.escape file} -O always`
@@ -42,11 +48,22 @@ class PrepareImport
   def collect_files(input)
     path = input[:path]
     Dir.chdir path
-    tracks_pattern = 'track-*.flac'
+    # tracks_pattern = 'track-*.flac'
 
-    tracks_pattern = '*.{flac,ape}' if Dir[tracks_pattern].none?
+    tracks_pattern = '*.{flac,ape}'# if Dir[tracks_pattern].none?
 
-    files = Dir[tracks_pattern].map { |f| File.join path, f }
+    # files = Dir[tracks_pattern].map { |f| File.join path, f }
+
+    files = []
+
+    Dir[tracks_pattern].each do |f|
+      file = File.join path, f
+      if need_to_split? file
+        files << split_file(file)
+      else
+        files << file
+      end
+    end
 
     if files.any?
       Success input.merge(files: files)
@@ -109,5 +126,11 @@ class PrepareImport
     end
 
     Success albums
+  end
+
+  private
+
+  def split_file(file)
+
   end
 end
