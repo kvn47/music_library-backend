@@ -4,6 +4,8 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.5.1'
 
 gem 'taglib-ruby'
+gem 'rubycue'
+
 gem 'carrierwave'
 gem 'mini_magick', '~> 4.8'
 gem 'trailblazer'

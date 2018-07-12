@@ -1,11 +1,11 @@
 require 'taglib'
+require 'rubycue'
 require 'shellwords'
 
 class PrepareImport
   include Dry::Transaction
 
   check :validate
-  tee :split_files
   step :collect_files
   map :get_tracks_info
   map :find_cover
@@ -20,49 +20,24 @@ class PrepareImport
     Dir.exist? path
   end
 
-  def split_files(path:, **)
-    Dir.chdir path
-
-    Dir['*.{flac,ape}'].each_with_index do |file_name, i|
-      # Rails.logger.debug "file_name.start_with?('track-') => #{file_name.start_with?('track-')}"
-      next if file_name.match? '/ - \d+$/'
-      file = File.join path, file_name
-      cue_file = "#{file.chomp(File.extname(file))}.cue"
-      file_prefix = "#{file_name} - #{i + 1}"
-      files_pattern = 'track-*.{flac|ape}'
-
-      # TODO: check
-      Rails.logger.debug "File.exist?(cue_file) => #{File.exist?(cue_file)}"
-      Rails.logger.debug "Dir[files_pattern] => #{Dir[files_pattern]}"
-      Rails.logger.debug "Dir[files_pattern].none? => #{Dir[files_pattern].none?}"
-      if File.exist?(cue_file) && Dir[files_pattern].none?
-        # Splitting tracks
-        `cuebreakpoints #{Shellwords.escape cue_file} | shnsplit -a #{file_prefix} -o flac #{Shellwords.escape file} -O always`
-
-        # Creating tag metadata
-        `cuetag #{Shellwords.escape cue_file} #{file_prefix}*.flac`
-      end
-    end
-  end
-
   def collect_files(input)
+    files = []
     path = input[:path]
     Dir.chdir path
-    # tracks_pattern = 'track-*.flac'
+    cue_files = Dir['*.cue']
 
-    tracks_pattern = '*.{flac,ape}'# if Dir[tracks_pattern].none?
-
-    # files = Dir[tracks_pattern].map { |f| File.join path, f }
-
-    files = []
-
-    Dir[tracks_pattern].each do |f|
-      file = File.join path, f
-      if need_to_split? file
-        files << split_file(file)
-      else
-        files << file
+    if cue_files.any?
+      cue_files.each do |cue_file|
+        file_name = File.basename(cue_file, '.*')
+        prefix = "#{file_name} - "
+        split_pattern = "#{prefix}*.flac"
+        split_file(cue_file, prefix) if Dir[split_pattern].empty?
+        files += Dir[split_pattern]
       end
+    else
+      ape_files = Dir['*.ape']
+      convert_ape ape_files if ape_files.any?
+      files += Dir['*.flac']
     end
 
     if files.any?
@@ -73,14 +48,16 @@ class PrepareImport
   end
 
   def get_tracks_info(input)
+    path = input[:path]
     tracks = []
 
-    input[:files].each do |file|
-      info = {path: file}
-      ext = File.extname file
+    input[:files].each do |file_name|
+      file_path = File.join path, file_name
+      info = {path: file_name}
+      ext = File.extname file_name
 
       if ext == '.flac'
-        TagLib::FLAC::File.open(file) do |ref|
+        TagLib::FLAC::File.open(file_path) do |ref|
           tag = ref.xiph_comment || ref.tag
           unless tag.nil?
             info[:artist] = tag.artist
@@ -92,7 +69,7 @@ class PrepareImport
           end
         end
       else
-        TagLib::FileRef.open(input[:path]) do |ref|
+        TagLib::FileRef.open(file_path) do |ref|
           unless ref.null?
             tag = ref.tag
             info[:artist] = tag.artist
@@ -121,16 +98,29 @@ class PrepareImport
   def assemble_albums(input)
     albums = input[:tracks].group_by(&:album).map do |album, tracks|
       track = tracks.first
-      # AlbumInfo.new track.artist, album, track.year, input[:cover], tracks
       {artist: track.artist, title: album, year: track.year, cover: input[:cover], tracks: tracks.map(&:to_h)}
     end
 
     Success albums
   end
 
-  private
+  def split_file(cue_file, prefix)
+    cuesheet = RubyCue::Cuesheet.new(File.read(cue_file))
+    cuesheet.parse!
+    file_name = Shellwords.escape(cuesheet.file)
+    cue_file = Shellwords.escape(cue_file)
+    prefix = Shellwords.escape(prefix)
 
-  def split_file(file)
+    `shnsplit -f #{cue_file} -a #{prefix} -o flac -O always #{file_name}`
+    # `cuebreakpoints #{cue_file} | shnsplit -f #{cue_file} -a #{prefix} -o flac -O always #{file_name}`
 
+    # Creating tag metadata
+    `cuetag #{cue_file} #{prefix}*.flac`
+  end
+
+  def convert_ape(files)
+    files.each do |file|
+      `shnconv -o flac -O always #{Shellwords.escape(file)}`
+    end
   end
 end

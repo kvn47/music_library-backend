@@ -11,7 +11,7 @@ class ApplicationController < ActionController::API
 
   def render_error(error = nil)
     error ||= result_message || 'error'
-    render json: {error: error}
+    render json: {message: error}, status: :bad_request
   end
 
   def result_message
