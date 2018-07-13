@@ -2,7 +2,7 @@ require 'taglib'
 require 'rubycue'
 require 'shellwords'
 
-class PrepareImport
+class Prepare
   include Dry::Transaction
 
   check :validate
