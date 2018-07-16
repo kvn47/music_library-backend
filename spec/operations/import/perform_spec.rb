@@ -13,7 +13,7 @@ RSpec.describe Import::Perform, :import do
     let(:import_params) do
       [
         {
-          path: '/Users/vova/Music/Shinedown - 2018 - Attention Attention [FLAC] [CD]',
+          path: import_path('Shinedown - 2018 - Attention Attention [FLAC] [CD]'),
           albums: [
             {
               artist: 'Shinedown',
@@ -35,10 +35,12 @@ RSpec.describe Import::Perform, :import do
   end
 
   context 'two albums from one flac file with cue' do
+    let(:path) { import_path('Tchaikovsky, Myaskovsky - Violin Concertos - Repin, Gergiev') }
+
     let(:import_params) do
       [
         {
-          path: '/Users/vova/Music/Tchaikovsky, Myaskovsky - Violin Concertos - Repin, Gergiev',
+          path: path,
           cue: 'Vadim Repin (violin), Valery Gergiev & Kirov Orchestra - Tchaikovsky & Myaskovsky Violin Concertos.cue',
           file: 'Vadim Repin (violin), Valery Gergiev & Kirov Orchestra - Tchaikovsky & Myaskovsky Violin Concertos.flac',
           albums: [
@@ -71,6 +73,11 @@ RSpec.describe Import::Perform, :import do
 
     it 'creates two albums with given tracks' do
       expect(Album.find_by(title: 'Violin Concerto In D Minor, Op.44')).to be_persisted
+    end
+
+    it 'removes splitted files' do
+      splitted_files = Dir.glob('Vadim Repin (violin), Valery Gergiev & Kirov Orchestra - Tchaikovsky & Myaskovsky Violin Concertos - *.flac', base: path)
+      expect(splitted_files).to be_empty
     end
   end
 end

@@ -16,23 +16,23 @@ RSpec.describe Import::CollectInfo, :import do
   subject(:result) { described_class.new.(path: path).value }
 
   context 'one album separate flac files without cue' do
-    let(:path) { '/Users/vova/Music/Shinedown - 2018 - Attention Attention [FLAC] [CD]' }
+    let(:path) { import_path('Shinedown - 2018 - Attention Attention [FLAC] [CD]') }
     let(:album_info) { {artist: 'Shinedown', title: 'ATTENTION ATTENTION'} }
-    let(:track_info) { {title: 'DEVIL', path: '/Users/vova/Music/Shinedown - 2018 - Attention Attention [FLAC] [CD]/02. DEVIL.flac'} }
+    let(:track_info) { {title: 'DEVIL', path: File.join(path, '02. DEVIL.flac')} }
 
     include_examples 'albums info'
   end
 
   context 'one album separate flac files with cue' do
-    let(:path) { '/Users/vova/Downloads/Music/TesseracT - Sonder  (2018) [Kscope Records, KSCOPE472]' }
+    let(:path) { import_path('TesseracT - Sonder  (2018) [Kscope Records, KSCOPE472]') }
     let(:album_info) { {artist: 'TesseracT', title: 'Sonder'} }
-    let(:track_info) { {title: 'Luminary', path: '/Users/vova/Music/TesseracT - Sonder  (2018) [Kscope Records, KSCOPE472]/01 - Luminary.flac'} }
+    let(:track_info) { {title: 'Luminary', path: File.join(path, '01 - Luminary.flac')} }
 
     include_examples 'albums info'
   end
 
   context 'one album in single flac file with cue' do
-    let(:path) { '/Users/vova/Downloads/Music/Tchaikovsky, Myaskovsky - Violin Concertos - Repin, Gergiev' }
+    let(:path) { import_path('Tchaikovsky, Myaskovsky - Violin Concertos - Repin, Gergiev') }
 
     let(:album_info) do
       {
@@ -41,13 +41,18 @@ RSpec.describe Import::CollectInfo, :import do
       }
     end
 
-    let(:track_info) { {title: 'Tchaikovsky Violin Concerto in D major, op.35 - I. Allegro moderato', path: '/Users/vova/Downloads/Music/Tchaikovsky, Myaskovsky - Violin Concertos - Repin, Gergiev/Vadim Repin (violin), Valery Gergiev & Kirov Orchestra - Tchaikovsky & Myaskovsky Violin Concertos.flac'} }
+    let(:track_info) do
+      {
+        title: 'Tchaikovsky Violin Concerto in D major, op.35 - I. Allegro moderato',
+        path: File.join(path, 'Vadim Repin (violin), Valery Gergiev & Kirov Orchestra - Tchaikovsky & Myaskovsky Violin Concertos.flac')
+      }
+    end
 
     include_examples 'albums info'
   end
 
   context 'two albums in nested separate flac files with cue' do
-    let(:path) { '/Users/vova/Music/Opeth - Sorceress (2016 Deluxe Edition)' }
+    let(:path) { import_path('Opeth - Sorceress (2016 Deluxe Edition)') }
 
     let(:album_info) do
       {
@@ -56,7 +61,7 @@ RSpec.describe Import::CollectInfo, :import do
       }
     end
 
-    let(:track_info) { {title: 'Persephone', path: '/Users/vova/Music/Opeth - Sorceress (2016 Deluxe Edition)/Disc 1/01 - Persephone.flac'} }
+    let(:track_info) { {title: 'Persephone', path: File.join(path, 'Disc 1/01 - Persephone.flac')} }
 
     include_examples 'albums info'
   end

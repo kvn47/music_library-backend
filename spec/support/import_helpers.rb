@@ -1,6 +1,10 @@
 module ImportHelpers
   def import_source
-    Rails.root.join 'tmp', 'import'
+    ENV['IMPORT_SOURCE']
+  end
+
+  def import_path(path)
+    File.join import_source, path
   end
 end
 

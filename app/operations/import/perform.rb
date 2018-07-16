@@ -19,12 +19,12 @@ module Import
           Dir.chdir path
           prefix = "#{File.basename(import_data[:file], '.*')} - "
           split_file import_data[:file], import_data[:cue], prefix
-          splitted_files += Dir["#{prefix}*.flac"].map { |file| File.join(path, file) }
 
           import_data[:albums].each do |album|
             album[:tracks].collect! do |track|
               cue_track = track.delete(:cue_track)
               track[:path] = File.join path, "#{prefix + cue_track}.flac"
+              splitted_files << track[:path]
               track
             end
             albums << album
@@ -53,6 +53,8 @@ module Import
                       result: result.success? ? 'success' : 'failure',
                       message: result.value
       end
+
+      FileUtils.rm_f splitted_files
 
       results
     end
