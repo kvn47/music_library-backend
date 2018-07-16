@@ -1,17 +1,49 @@
+require 'shellwords'
+
 module Import
   class Perform
     include Dry::Transaction
 
-    map :prepare
+    step :prepare
     map :process
 
     private
 
     def prepare(input)
+      albums = []
+      splitted_files = []
 
+      input.each do |import_data|
+        path = import_data[:path]
+        if import_data.key? :cue
+          Dir.chdir path
+          prefix = "#{File.basename(import_data[:file], '.*')} - "
+          split_file import_data[:file], import_data[:cue], prefix
+          splitted_files += Dir["#{prefix}*.flac"].map { |file| File.join(path, file) }
+
+          import_data[:albums].each do |album|
+            album[:tracks].collect! do |track|
+              cue_track = track.delete(:cue_track)
+              track[:path] = File.join path, "#{prefix + cue_track}.flac"
+              track
+            end
+            albums << album
+          end
+        else
+          import_data[:albums].each do |album|
+            album[:tracks].collect! do |track|
+              track[:path] = File.join path, track[:file]
+              track
+            end
+            albums << album
+          end
+        end
+      end
+
+      Success albums: albums, splitted_files: splitted_files
     end
 
-    def process(albums:, **)
+    def process(albums:, splitted_files:, **)
       results = {}
 
       albums.each do |album_params|
@@ -23,6 +55,24 @@ module Import
       end
 
       results
+    end
+
+    def split_file(file, cue_file, prefix)
+      prefix = Shellwords.escape(prefix)
+      cue_file = Shellwords.escape(cue_file)
+      file = Shellwords.escape(file)
+
+      `shnsplit -f #{cue_file} -a #{prefix} -o flac -O always #{file}`
+      # `cuebreakpoints #{cue_file} | shnsplit -f #{cue_file} -a #{prefix} -o flac -O always #{file_name}`
+
+      # Creating tag metadata
+      # `cuetag #{cue_file} #{prefix}*.flac`
+    end
+
+    def convert_ape_files(files)
+      files.each do |file|
+        `shnconv -o flac -O always #{Shellwords.escape(file)}`
+      end
     end
   end
 end

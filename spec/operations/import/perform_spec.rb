@@ -6,14 +6,14 @@ require 'rails_helper'
 #   end
 # end
 
-RSpec.describe Import::PerformImport, :import do
-  subject(:result) { described_class.new.(import_params) }
+RSpec.describe Import::Perform, :import do
+  subject!(:result) { described_class.new.(import_params) }
 
   context 'one album from separate flac files' do
     let(:import_params) do
       [
         {
-          path: '/Users/vova/Downloads/Music/Shinedown - 2018 - Attention Attention [FLAC] [CD]',
+          path: '/Users/vova/Music/Shinedown - 2018 - Attention Attention [FLAC] [CD]',
           albums: [
             {
               artist: 'Shinedown',
@@ -38,7 +38,7 @@ RSpec.describe Import::PerformImport, :import do
     let(:import_params) do
       [
         {
-          path: '/Users/vova/Downloads/Music/Tchaikovsky, Myaskovsky - Violin Concertos - Repin, Gergiev',
+          path: '/Users/vova/Music/Tchaikovsky, Myaskovsky - Violin Concertos - Repin, Gergiev',
           cue: 'Vadim Repin (violin), Valery Gergiev & Kirov Orchestra - Tchaikovsky & Myaskovsky Violin Concertos.cue',
           file: 'Vadim Repin (violin), Valery Gergiev & Kirov Orchestra - Tchaikovsky & Myaskovsky Violin Concertos.flac',
           albums: [
@@ -56,7 +56,7 @@ RSpec.describe Import::PerformImport, :import do
             {
               artist: 'Мясковский',
               title: 'Violin Concerto In D Minor, Op.44',
-              year: '',
+              year: '1938',
               cover: '',
               tracks: [
                 {number: '1', title: 'I. Allegro', cue_track: '04'},
@@ -70,7 +70,7 @@ RSpec.describe Import::PerformImport, :import do
     end
 
     it 'creates two albums with given tracks' do
-      # expect().
+      expect(Album.find_by(title: 'Violin Concerto In D Minor, Op.44')).to be_persisted
     end
   end
 end

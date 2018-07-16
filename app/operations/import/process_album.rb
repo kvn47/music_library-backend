@@ -30,6 +30,7 @@ module Import
       return Failure(:album_exists) if Album.exists?(title: title, artist_id: artist.id)
 
       path = File.join(artist.path, [year, title].join(' - '))
+      Rails.logger.debug "FileUtils.mkdir_p(#{path})"
       FileUtils.mkdir_p path
       cover = copy_cover(input[:cover], path)
       album = Album.new(artist: artist, title: title, path: path, year: year, cover: cover)
@@ -65,10 +66,11 @@ module Import
       src_path = track_params[:path]
       ext = File.extname src_path
       number = format '%02d', track.number
-      path = File.join album.path, "#{number} - #{track.title}#{ext}"
-      Rails.logger.info "Copy #{src_path} to #{path}"
-      FileUtils.copy_file src_path, path
-      track.path = path
+      dst_path = File.join album.path, "#{number} - #{track.title}#{ext}"
+      Rails.logger.info "Copy #{src_path} to #{dst_path}"
+      # FileUtils.mkdir_p album.path
+      FileUtils.copy_file src_path, dst_path
+      track.path = dst_path
       update_tags track
       track
     end
@@ -79,7 +81,7 @@ module Import
           tag = file.tag
           tag.artist = track.artist.name
           tag.album = track.album.title
-          tag.year = track.album.year
+          tag.year = track.album.year unless track.album.year.nil?
           tag.title = track.title
           file.save
         end

@@ -16,9 +16,9 @@ RSpec.describe Import::CollectInfo, :import do
   subject(:result) { described_class.new.(path: path).value }
 
   context 'one album separate flac files without cue' do
-    let(:path) { '/Users/vova/Downloads/Music/Shinedown - 2018 - Attention Attention [FLAC] [CD]' }
+    let(:path) { '/Users/vova/Music/Shinedown - 2018 - Attention Attention [FLAC] [CD]' }
     let(:album_info) { {artist: 'Shinedown', title: 'ATTENTION ATTENTION'} }
-    let(:track_info) { {title: 'DEVIL', path: '/Users/vova/Downloads/Music/Shinedown - 2018 - Attention Attention [FLAC] [CD]/02. DEVIL.flac'} }
+    let(:track_info) { {title: 'DEVIL', path: '/Users/vova/Music/Shinedown - 2018 - Attention Attention [FLAC] [CD]/02. DEVIL.flac'} }
 
     include_examples 'albums info'
   end
@@ -26,7 +26,7 @@ RSpec.describe Import::CollectInfo, :import do
   context 'one album separate flac files with cue' do
     let(:path) { '/Users/vova/Downloads/Music/TesseracT - Sonder  (2018) [Kscope Records, KSCOPE472]' }
     let(:album_info) { {artist: 'TesseracT', title: 'Sonder'} }
-    let(:track_info) { {title: 'Luminary', path: '/Users/vova/Downloads/Music/TesseracT - Sonder  (2018) [Kscope Records, KSCOPE472]/01 - Luminary.flac'} }
+    let(:track_info) { {title: 'Luminary', path: '/Users/vova/Music/TesseracT - Sonder  (2018) [Kscope Records, KSCOPE472]/01 - Luminary.flac'} }
 
     include_examples 'albums info'
   end
