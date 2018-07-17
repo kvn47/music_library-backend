@@ -22,7 +22,8 @@ Rails.application.routes.draw do
     end
 
     resources :notes
-    resource :albums_import, only: %i[new create]
+    get 'albums_import/new', to: 'albums_import#new'
+    post 'albums_import', to: 'albums_import#create'
     get :settings, to: 'settings#index'
     patch :settings, to: 'settings#update'
     put :library, to: 'library#update'

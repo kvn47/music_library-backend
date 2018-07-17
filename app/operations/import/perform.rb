@@ -12,17 +12,17 @@ module Import
     def prepare(input)
       albums = []
       splitted_files = []
+      path = input[:path]
+      Dir.chdir path
 
-      input.each do |import_data|
-        path = import_data[:path]
-        if import_data.key? :cue
-          Dir.chdir path
-          prefix = "#{File.basename(import_data[:file], '.*')} - "
-          split_file import_data[:file], import_data[:cue], prefix
+      input[:import_sources].each do |import_source|
+        if import_source.key? :cue
+          prefix = "#{File.basename(import_source[:file], '.*')} - "
+          split_file import_source[:file], import_source[:cue], prefix
 
-          import_data[:albums].each do |album|
+          import_source[:albums].each do |album|
             album[:tracks].collect! do |track|
-              cue_track = track.delete(:cue_track)
+              cue_track = format('%02d', track.delete(:cue_track))
               track[:path] = File.join path, "#{prefix + cue_track}.flac"
               splitted_files << track[:path]
               track
@@ -30,7 +30,7 @@ module Import
             albums << album
           end
         else
-          import_data[:albums].each do |album|
+          import_source[:albums].each do |album|
             album[:tracks].collect! do |track|
               track[:path] = File.join path, track[:file]
               track
@@ -47,7 +47,8 @@ module Import
       results = {}
 
       albums.each do |album_params|
-        result = ProcessAlbum.new.(album_params)
+        Rails.logger.debug "[albums_params] #{album_params}"
+        result = ProcessAlbum.new.(album_params.with_indifferent_access)
 
         results.store album_params[:title],
                       result: result.success? ? 'success' : 'failure',

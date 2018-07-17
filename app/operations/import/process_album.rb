@@ -6,8 +6,8 @@ module Import
     include Dry::Transaction
 
     map :artist!
-    step :album!
-    step :tracks!
+    map :album!
+    map :tracks!
     step :persist
 
     private
@@ -20,30 +20,37 @@ module Import
         a.path = File.join dst, a.name
       end
 
-      input.merge(artist: artist)
+      input.merge artist: artist
     end
 
     def album!(input)
       artist = input[:artist]
       title = input[:title]
       year = input[:year]
-      return Failure(:album_exists) if Album.exists?(title: title, artist_id: artist.id)
+      album = Album.find_by(title: title, artist_id: artist.id)
 
-      path = File.join(artist.path, [year, title].join(' - '))
-      Rails.logger.debug "FileUtils.mkdir_p(#{path})"
-      FileUtils.mkdir_p path
-      cover = copy_cover(input[:cover], path)
-      album = Album.new(artist: artist, title: title, path: path, year: year, cover: cover)
-      Success input.merge(album: album)
+      if album.nil?
+        path = File.join(artist.path, [year, title].join(' - '))
+        Rails.logger.debug "FileUtils.mkdir_p(#{path})"
+        FileUtils.mkdir_p path
+        cover = copy_cover(input[:cover], path)
+        album = Album.new(artist: artist, title: title, path: path, year: year, cover: cover)
+      end
+
+      result = input.merge album: album
+      Rails.logger.debug "[album!] #{result}"
+      result
     end
 
-    def tracks!(tracks:, album:, **)
-      tracks.each do |track_params|
+    def tracks!(input)
+      album = input['album']
+
+      input['tracks'].each do |track_params|
         track = copy_track(track_params, album)
         album.tracks << track
       end
 
-      Success album
+      album
     end
 
     def persist(album)
