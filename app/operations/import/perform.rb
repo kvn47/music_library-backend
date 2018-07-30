@@ -2,7 +2,7 @@ require 'shellwords'
 
 module Import
   class Perform
-    include Dry::Transaction
+    include TheTransaction
 
     step :prepare
     map :process

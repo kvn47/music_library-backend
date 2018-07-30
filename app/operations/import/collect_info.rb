@@ -4,7 +4,7 @@ require 'shellwords'
 
 module Import
   class CollectInfo
-    include Dry::Transaction
+    include TheTransaction
 
     check :validate
     step :perform

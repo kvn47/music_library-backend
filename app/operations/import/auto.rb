@@ -1,6 +1,6 @@
 module Import
   class Auto
-    include Dry::Transaction
+    include TheTransaction
 
     step :collect_info
     step :process
@@ -8,7 +8,7 @@ module Import
     private
 
     def collect_info(path:, **)
-      result = CollectInfo.new.(path: path)
+      result = CollectInfo.(path: path)
 
       if result.success?
         Success path: path, import_sources: result.value
@@ -18,7 +18,7 @@ module Import
     end
 
     def process(input)
-      Perform.new.(input)
+      Perform.(input)
     end
   end
 end

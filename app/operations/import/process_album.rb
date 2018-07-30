@@ -3,7 +3,7 @@ require 'shellwords'
 
 module Import
   class ProcessAlbum
-    include Dry::Transaction
+    include TheTransaction
 
     map :artist!
     map :album!
