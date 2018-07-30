@@ -1,7 +1,5 @@
 class AlbumsImportController < ApplicationController
   def new
-    # input = params.permit(:path)
-    # AlbumsImport::Prepare.new.(path: params[:path]) do |m|
     Import::CollectInfo.new.(path: params[:path]) do |m|
       m.success { |value| render json: value }
       m.failure { |error| render_error error }
