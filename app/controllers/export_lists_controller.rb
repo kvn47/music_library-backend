@@ -2,28 +2,28 @@ class ExportListsController < ApplicationController
 
   def index
     run ExportList::Index do
-      return represent ExportList::Representer::Base.for_collection
+      return represent_model ExportList::Representer::Base.for_collection
     end
     render_error
   end
 
   def show
     run ExportList::Show do
-      return represent ExportList::Representer::Show
+      return represent_model ExportList::Representer::Show
     end
     render_error
   end
 
   def create
     run ExportList::Create do
-      return represent ExportList::Representer::Base
+      return represent_model ExportList::Representer::Base
     end
     render_error
   end
 
   def update
     run ExportList::Update do
-      return represent ExportList::Representer::Base
+      return represent_model ExportList::Representer::Base
     end
     render_error
   end
@@ -37,21 +37,21 @@ class ExportListsController < ApplicationController
 
   def add
     run ExportList::Add do
-      return represent ExportList::Representer::Show
+      return represent_model ExportList::Representer::Show
     end
     render_error
   end
 
   def remove
     run ExportList::Remove do
-      return represent ExportList::Representer::Show
+      return represent_model ExportList::Representer::Show
     end
     render_error
   end
 
   def clear
     run ExportList::Clear do
-      return represent ExportList::Representer::Show
+      return represent_model ExportList::Representer::Show
     end
     render_error
   end

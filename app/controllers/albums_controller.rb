@@ -2,28 +2,28 @@ class AlbumsController < ApplicationController
 
   def index
     run Album::Index do
-      return represent Album::Representer::Base.for_collection
+      return represent_model Album::Representer::Base.for_collection
     end
     render_error
   end
 
   def show
     run Album::Show do
-      return represent Album::Representer::Show
+      return represent_model Album::Representer::Show
     end
     render_error
   end
 
   def create
     run Album::Create do
-      return represent Album::Representer::Base
+      return represent_model Album::Representer::Base
     end
     render_error
   end
 
   def update
     run Album::Update do
-      return represent Album::Representer::Base
+      return represent_model Album::Representer::Base
     end
     render_error
   end

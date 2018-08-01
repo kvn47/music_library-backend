@@ -4,7 +4,11 @@ class ApplicationController < ActionController::API
 
   private
 
-  def represent(representer_class, model = nil)
+  # def params_hash
+  #   params.to_unsafe_h.symbolize_keys
+  # end
+
+  def represent_model(representer_class, model: nil)
     model ||= @model
     render json: representer_class.new(model).to_json
   end

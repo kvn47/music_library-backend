@@ -1,28 +1,28 @@
 class TracklistsController < ApplicationController
   def index
     run Tracklist::Index do
-      return represent Tracklist::Representer::Base.for_collection
+      return represent_model Tracklist::Representer::Base.for_collection
     end
     render_error
   end
 
   def show
     run Tracklist::Show do
-      return represent Tracklist::Representer::Show
+      return represent_model Tracklist::Representer::Show
     end
     render_error
   end
 
   def create
     run Tracklist::Create do
-      return represent Tracklist::Representer::Base
+      return represent_model Tracklist::Representer::Base
     end
     render_error
   end
 
   def update
     run Tracklist::Update do
-      return represent Tracklist::Representer::Base
+      return represent_model Tracklist::Representer::Base
     end
     render_error
   end
@@ -36,21 +36,21 @@ class TracklistsController < ApplicationController
 
   def add_tracks
     run Tracklist::AddTracks do
-      return represent Tracklist::Representer::Show
+      return represent_model Tracklist::Representer::Show
     end
     render_error
   end
 
   def remove_track
     run Tracklist::RemoveTrack do
-      return represent Tracklist::Representer::Show
+      return represent_model Tracklist::Representer::Show
     end
     render_error
   end
 
   def clear
     run Tracklist::Clear do
-      return represent Tracklist::Representer::Show
+      return represent_model Tracklist::Representer::Show
     end
     render_error
   end

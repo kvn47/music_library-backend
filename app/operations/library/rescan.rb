@@ -1,6 +1,6 @@
 module Library
   class Rescan
-    include TheOperation
+    include AnOperation
 
     TRACK_REGEXP = /^(?<number>\d+)(. | - )(?<title>.+)\.(?<type>(flac|ape))\z/
     ALBUM_REGEXP = /^(?<year>\d+) - (?<title>.+)\z/
