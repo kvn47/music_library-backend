@@ -42,5 +42,5 @@ class NotesController < ApplicationController
 
   def model_class; Note end
 
-  def representer_class; Note::Representer::Base end
+  def serializer_class; NoteSerializer end
 end

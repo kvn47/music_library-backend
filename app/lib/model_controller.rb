@@ -1,7 +1,7 @@
 module ModelController
   def index
     collection = model_class.all
-    represent collection, :collection
+    represent collection
   end
 
   def show
@@ -13,9 +13,9 @@ module ModelController
     CreateModel
       .new(validate: params_validator)
       .with_step_args(validate: [contract], create: [model_class])
-      .(params_hash) do |result|
-      result.success { |model| represent model }
-      result.failure { |error| render_error error }
+      .(params_hash) do |m|
+      m.success { |model| represent model }
+      m.failure { |error| render_error error }
     end
   end
 
@@ -23,16 +23,16 @@ module ModelController
     UpdateModel
       .new(validate: params_validator)
       .with_step_args(validate: [contract], update: [model_class, params[:id]])
-      .(params_hash) do |result|
-      result.success { |model| represent model }
-      result.failure { |error| render_error error }
+      .(params_hash) do |m|
+      m.success { |model| represent model }
+      m.failure { |error| render_error error }
     end
   end
 
   def destroy
-    DestroyModel.new.with_step_args(destroy: [model_class]).(params_hash) do |result|
-      result.success { |model| represent model }
-      result.failure { |error| render_error error }
+    DestroyModel.new.with_step_args(destroy: [model_class]).(params_hash) do |m|
+      m.success { |model| represent model }
+      m.failure { |error| render_error error }
     end
   end
 
@@ -46,12 +46,8 @@ module ModelController
     ValidateParams.new
   end
 
-  def represent(model, variant = :base)
-    if variant == :collection
-      render json: representer_class.for_collection.new(model).to_json
-    else
-      render json: representer_class.new(model).to_json
-    end
+  def represent(model)
+    render json: representer_class.new(model).to_json
   end
 
   def contract
@@ -63,6 +59,7 @@ module ModelController
   end
 
   def representer_class
-    raise NotImplementedError
+    "#{model_class.name}Representer"
+    # raise NotImplementedError
   end
 end
