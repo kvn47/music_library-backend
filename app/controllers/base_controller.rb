@@ -1,6 +1,6 @@
 class BaseController < ApplicationController
   def index
-    collection = model_class.ordered
+    collection = model_class.query(action_params)
     represent collection
   end
 
