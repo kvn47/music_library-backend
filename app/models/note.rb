@@ -16,4 +16,19 @@
 
 class Note < ApplicationRecord
   KINDS = %w[listen download keep await].freeze
+
+  scope :ordered, -> { order :created_at }
+
+  def self.query(search: nil, **)
+    notes = ordered
+
+    if search
+      search.chomp.split(/\s+/).each do |word|
+        notes = notes.where('LOWER(artist) ILIKE :search OR LOWER(album) ILIKE :search',
+                            search: "%#{word.mb_chars.downcase}%")
+      end
+    end
+
+    notes
+  end
 end

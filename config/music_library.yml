@@ -11,4 +11,4 @@ production:
 
 test:
   <<: *defaults
-  library_path: '/Users/vova/Projects/MusicLibrary/backend-rails/tmp'
+  library_path: <%= ENV['MUSIC_LIBRARY'] %>

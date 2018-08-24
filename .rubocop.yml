@@ -1,0 +1,80 @@
+#require: rubocop-rspec
+
+Rails:
+  Enabled: true
+
+Rails/FilePath:
+  Enabled: false
+
+AllCops:
+  Exclude:
+  - 'db/**/*'
+  - 'vendor/**/*'
+
+Layout/EmptyLineAfterMagicComment:
+  Enabled: true
+
+Layout/EmptyLines:
+  Enabled: true
+
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+
+Style/BlockDelimiters:
+  EnforcedStyle: braces_for_chaining
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/CollectionMethods:
+  Enabled: true
+
+Style/Documentation:
+  Enabled: false
+
+Style/InlineComment:
+  Enabled: false
+
+Style/LambdaCall:
+  EnforcedStyle: braces
+
+Style/MutableConstant:
+  Enabled: true
+
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    '%':  '()'
+    '%i': '[]'
+    '%q': '()'
+    '%Q': '()'
+    '%r': '{}'
+    '%s': '()'
+    '%w': '[]'
+    '%W': '[]'
+    '%x': '()'
+
+Style/Send:
+  Enabled: true
+
+Style/SymbolArray:
+  Enabled: true
+
+Style/SingleLineMethods:
+  Enabled: false
+
+Style/StringLiterals:
+  Exclude:
+  - 'spec/**/*.rb'
+
+Metrics/BlockLength:
+  Exclude:
+  - 'spec/**/*.rb'
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/MethodLength:
+  Max: 50
+
+#RSpec/ExampleLength:
+#  Max: 8

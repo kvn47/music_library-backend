@@ -3,9 +3,7 @@ require 'rubycue'
 require 'shellwords'
 
 module Import
-  class CollectInfo
-    include Dry::Transaction
-
+  class CollectInfo < ATransaction
     check :validate
     step :perform
 

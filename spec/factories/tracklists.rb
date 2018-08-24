@@ -10,6 +10,6 @@
 
 FactoryBot.define do
   factory :tracklist do
-    
+    sequence(:name) { |n| "Tracklist #{n}" }
   end
 end

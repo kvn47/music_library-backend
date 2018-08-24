@@ -1,8 +1,8 @@
 class LibraryController < ApplicationController
   def update
-    run Library::Update do
-      return render json: {message: 'ok'}
+    run Library::Rescan do |r|
+      r.success { |value| render json: {message: value} }
+      r.failure { |error| render_error error }
     end
-    render_error
   end
 end
