@@ -5,9 +5,9 @@ class SettingsController < ApplicationController
   end
 
   def update
-    run Setting::Update do
-      return render json: {message: 'ok'}
+    run Settings::Update do |r|
+      r.success { |settings| render json: settings, status: :ok }
+      r.failure { |error| render_error error }
     end
-    render_error
   end
 end

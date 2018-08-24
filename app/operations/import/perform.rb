@@ -1,9 +1,7 @@
 require 'shellwords'
 
 module Import
-  class Perform
-    include TheTransaction
-
+  class Perform < ATransaction
     step :prepare
     map :process
 

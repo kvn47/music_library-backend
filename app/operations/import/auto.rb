@@ -1,7 +1,5 @@
 module Import
-  class Auto
-    include TheTransaction
-
+  class Auto < ATransaction
     step :collect_info
     step :process
 

@@ -1,7 +1,5 @@
 module Library
-  class Purge
-    include AnOperation
-
+  class Purge < AnOperation
     def call(with_files: false)
       [Tracklist, ExportList, Artist].each(&:destroy_all)
 

@@ -4,9 +4,9 @@ RSpec.describe Import::Auto, :import do
   subject(:result) { described_class.new.(path: path) }
 
   context 'one album separate flac files' do
-    let(:path) { import_path('Toundra/2018 - Vortex') }
+    let(:path) { import_path('Toundra - Vortex - 2018') }
 
-    it { is_expected.to be_success }
+    it { is_expected.to be_success, result.failure }
   end
 
   context 'two albums from one flac file with cue' do

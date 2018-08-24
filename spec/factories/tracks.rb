@@ -15,7 +15,7 @@
 
 FactoryBot.define do
   factory :track do
-    title "MyString"
-    album nil
+    sequence(:number) { |n| n }
+    title { "Track #{number}" }
   end
 end

@@ -3,19 +3,16 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.5.1'
 
-gem 'taglib-ruby'
-gem 'rubycue'
-
 gem 'carrierwave'
 gem 'mini_magick', '~> 4.8'
-gem 'dry-validation'
+gem 'rubycue'
+gem 'taglib-ruby'
+
+gem 'dry-configurable'
 gem 'dry-transaction'
-# gem 'fast_jsonapi'
-gem 'trailblazer'
-gem 'trailblazer-rails'
-gem 'reform-rails'
-gem 'representable'
+gem 'dry-validation'
 gem 'multi_json'
+gem 'representable'
 
 gem 'rails', '~> 5.2.0'
 gem 'sqlite3'
@@ -27,7 +24,8 @@ gem 'dotenv-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'rspec-rails'
 end
 
 group :development do
@@ -38,7 +36,6 @@ group :development do
 end
 
 group :test do
-  gem 'rspec-rails'
   gem 'rspec-json_expectations', '~> 2.1.0'
   gem 'shoulda-matchers', '~> 3.0'
   gem 'factory_bot_rails', '~> 4.8.2'

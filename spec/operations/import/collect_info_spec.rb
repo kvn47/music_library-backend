@@ -15,7 +15,7 @@ RSpec.describe Import::CollectInfo, :import do
   subject(:result) { described_class.new.(path: path).value }
 
   context 'one album separate flac files without cue' do
-    let(:path) { import_path('Toundra-Vortex-2018') }
+    let(:path) { import_path('Toundra - Vortex - 2018') }
 
     let(:import_info) do
       {
@@ -25,16 +25,16 @@ RSpec.describe Import::CollectInfo, :import do
             title: 'Vortex',
             genre: 'Instrumental Rock',
             year: 2018,
-            cover: 'vortex.jpg',
+            cover: 'cover.jpg',
             tracks: [
-              {number: 1, title: 'Intro Vortex', file: '01.intro_vortex.flac'},
-              {number: 2, title: 'Cobra', file: '02.cobra.flac'},
-              {number: 3, title: 'Tuareg', file: '03.tuareg.flac'},
-              {number: 4, title: 'Cartavio', file: '04.cartavio.flac'},
-              {number: 5, title: 'Kingston Falls', file: '05.kingston_falls.flac'},
-              {number: 6, title: 'Mojave', file: '06.mojave.flac'},
-              {number: 7, title: 'Roy Neary', file: '07.roy_neary.flac'},
-              {number: 8, title: 'Cruce Oeste', file: '08.cruce_oeste.flac'}
+              {number: 1, title: 'Intro Vortex', file: '01. Intro Vortex.flac'},
+              {number: 2, title: 'Cobra', file: '02. Cobra.flac'},
+              {number: 3, title: 'Tuareg', file: '03. Tuareg.flac'},
+              {number: 4, title: 'Cartavio', file: '04. Cartavio.flac'},
+              {number: 5, title: 'Kingston Falls', file: '05. Kingston Falls.flac'},
+              {number: 6, title: 'Mojave', file: '06. Mojave.flac'},
+              {number: 7, title: 'Roy Neary', file: '07. Roy Neary.flac'},
+              {number: 8, title: 'Cruce Oeste', file: '08. Cruce Oeste.flac'}
             ]
           }
         ]
@@ -45,7 +45,7 @@ RSpec.describe Import::CollectInfo, :import do
   end
 
   context 'one album separate flac files with cue' do
-    let(:path) { import_path('TesseracT - Sonder  (2018) [Kscope Records, KSCOPE472]') }
+    let(:path) { import_path('TesseracT - Sonder - 2018') }
 
     let(:import_info) do
       {
@@ -55,16 +55,16 @@ RSpec.describe Import::CollectInfo, :import do
             title: 'Sonder',
             genre: 'Progressive Metal',
             year: 2018,
-            cover: nil,
+            cover: 'cover.png',
             tracks: [
-              {number: 1, title: 'Luminary', file: '01 - Luminary.flac'},
-              {number: 2, title: 'King', file: '02 - King.flac'},
-              {number: 3, title: 'Orbital', file: '03 - Orbital.flac'},
-              {number: 4, title: 'Juno', file: '04 - Juno.flac'},
-              {number: 5, title: 'Beneath My Skin', file: '05 - Beneath My Skin.flac'},
-              {number: 6, title: 'Mirror Image', file: '06 - Mirror Image.flac'},
-              {number: 7, title: 'Smile', file: '07 - Smile.flac'},
-              {number: 8, title: 'The Arrow', file: '08 - The Arrow.flac'}
+              {number: 1, title: 'Luminary', file: '01. Luminary.flac'},
+              {number: 2, title: 'King', file: '02. King.flac'},
+              {number: 3, title: 'Orbital', file: '03. Orbital.flac'},
+              {number: 4, title: 'Juno', file: '04. Juno.flac'},
+              {number: 5, title: 'Beneath My Skin', file: '05. Beneath My Skin.flac'},
+              {number: 6, title: 'Mirror Image', file: '06. Mirror Image.flac'},
+              {number: 7, title: 'Smile', file: '07. Smile.flac'},
+              {number: 8, title: 'The Arrow', file: '08. The Arrow.flac'}
             ]
           }
         ]

@@ -16,4 +16,6 @@
 
 class Note < ApplicationRecord
   KINDS = %w[listen download keep await].freeze
+
+  scope :ordered, -> { order :created_at }
 end

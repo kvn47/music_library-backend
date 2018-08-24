@@ -1,7 +1,5 @@
 module Library
-  class Rescan
-    include AnOperation
-
+  class Rescan < AnOperation
     TRACK_REGEXP = /^(?<number>\d+)(. | - )(?<title>.+)\.(?<type>(flac|ape))\z/
     ALBUM_REGEXP = /^(?<year>\d+) - (?<title>.+)\z/
     IMAGE_REGEXP = /.+\.(jpg|jpeg|png)/

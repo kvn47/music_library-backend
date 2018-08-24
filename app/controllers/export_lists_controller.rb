@@ -1,65 +1,29 @@
-class ExportListsController < ApplicationController
-
-  def index
-    run ExportList::Index do
-      return represent_model ExportList::Representer::Base.for_collection
-    end
-    render_error
-  end
-
-  def show
-    run ExportList::Show do
-      return represent_model ExportList::Representer::Show
-    end
-    render_error
-  end
-
-  def create
-    run ExportList::Create do
-      return represent_model ExportList::Representer::Base
-    end
-    render_error
-  end
-
-  def update
-    run ExportList::Update do
-      return represent_model ExportList::Representer::Base
-    end
-    render_error
-  end
-
-  def destroy
-    run ExportList::Delete do
-      return render json: {id: params[:id]}
-    end
-    render_error
-  end
-
+class ExportListsController < BaseController
   def add
-    run ExportList::Add do
-      return represent_model ExportList::Representer::Show
+    run ExportList::AddTracks do |r|
+      r.success { |export_list| represent export_list }
+      r.failure { |error| render_error error }
     end
-    render_error
   end
 
   def remove
-    run ExportList::Remove do
-      return represent_model ExportList::Representer::Show
+    run ExportList::RemoveTrack do |r|
+      r.success { |export_list| represent export_list }
+      r.failure { |error| render_error error }
     end
-    render_error
   end
 
   def clear
-    run ExportList::Clear do
-      return represent_model ExportList::Representer::Show
+    run ExportList::Clear do |r|
+      r.success { |export_list| represent export_list }
+      r.failure { |error| render_error error }
     end
-    render_error
   end
 
   def export
-    run ExportList::Export do |result|
-      return render json: {message: result['result.message']}
+    run ExportList::Export do |r|
+      r.success { |export_list| represent export_list }
+      r.failure { |error| render_error error }
     end
-    render_error
   end
 end

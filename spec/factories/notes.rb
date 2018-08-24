@@ -19,7 +19,6 @@ FactoryBot.define do
     kind 'listen'
     sequence(:artist) { |n| "Artist #{n}" }
     sequence(:album) { |n| "Album #{n}" }
-    details "MyText"
 
     trait :download do
       download_url "MyString"

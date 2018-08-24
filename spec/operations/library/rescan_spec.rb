@@ -6,6 +6,6 @@ RSpec.describe Library::Rescan do
   it { is_expected.to be_success }
 
   it 'creates Album' do
-    expect(Album.count).to eq(1)
+    expect(Album.count).to eq(4)
   end
 end

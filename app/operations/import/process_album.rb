@@ -2,9 +2,7 @@ require 'taglib'
 require 'shellwords'
 
 module Import
-  class ProcessAlbum
-    include TheTransaction
-
+  class ProcessAlbum < ATransaction
     map :artist!
     map :album!
     map :tracks!
