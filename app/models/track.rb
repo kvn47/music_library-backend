@@ -14,6 +14,7 @@
 #
 
 class Track < ApplicationRecord
+  default_scope -> { ordered }
   scope :ordered, -> { order :number }
   scope :in_export_list, ->(export_list) { where id: export_list.track_ids }
   scope :by_artist_id, ->(artist_id) { includes(:album).where(albums: {artist_id: artist_id}) }

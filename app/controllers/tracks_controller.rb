@@ -1,6 +1,6 @@
 class TracksController < BaseController
   def index
-    tracks = Track.query(**action_params)
+    tracks = Track.includes(album: :artist).query(**action_params)
     represent tracks
   end
 end
