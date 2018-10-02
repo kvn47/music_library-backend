@@ -71,7 +71,7 @@ module Import
       src_path = track_params[:path]
       ext = File.extname src_path
       number = format '%02d', track.number
-      dst_path = File.join album.path, "#{number} - #{track.title}#{ext}"
+      dst_path = File.join album.path, "#{number}. #{track.title}#{ext}"
       Rails.logger.info "Copy #{src_path} to #{dst_path}"
       # FileUtils.mkdir_p album.path
       FileUtils.copy_file src_path, dst_path
