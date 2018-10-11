@@ -1,4 +1,10 @@
-class TracklistsController < BaseController
+class TracklistsController < ApplicationController
+  include BaseCreateAction
+  include BaseIndexAction
+  include BaseShowAction
+  include BaseUpdateAction
+  include BaseDestroyAction
+
   def add_tracks
     run Tracklist::AddTracks do |r|
       r.success { |tracklist| represent tracklist }

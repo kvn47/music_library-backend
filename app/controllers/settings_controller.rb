@@ -1,5 +1,4 @@
 class SettingsController < ApplicationController
-
   def index
     render json: MusicLibrary.config
   end
