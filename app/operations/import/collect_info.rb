@@ -6,6 +6,7 @@ module Import
   class CollectInfo < ATransaction
     check :validate
     step :perform
+    tee :get_musicbrainz_info
 
     private
 
@@ -67,6 +68,15 @@ module Import
 
       return Failure :info_not_found if import_info.empty?
       Success import_info
+    end
+
+    def get_musicbrainz_info(import_info)
+      mb_client = MusicBrainzClient.new
+
+      import_info[:albums].each do |album|
+        mb_info = mb_client.search_release(artist: album[:artist], title: album[:title])
+        album[:mb_info] = mb_info
+      end
     end
 
     def find_cover(path)

@@ -7,6 +7,8 @@ gem 'carrierwave'
 gem 'mini_magick', '~> 4.8'
 gem 'rubycue'
 gem 'taglib-ruby'
+gem 'httparty'
+gem 'hashie'
 
 gem 'dry-configurable'
 gem 'dry-transaction'
