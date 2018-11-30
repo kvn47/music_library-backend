@@ -1,5 +1,4 @@
 require 'rails_helper'
-require_relative '../../lib/music_brainz_client'
 
 RSpec.describe MusicBrainzClient do
   describe "#call" do
@@ -16,7 +15,7 @@ RSpec.describe MusicBrainzClient do
     # subject!(:response) { described_class.new.release(artist: 'Hilary Hahn', title: 'Brahms & Stravinsky Violin Concertos') }
 
     it 'returns release details' do
-      expect(response).to include(:id)
+      expect(response).to include(:mbid)
     end
   end
 
@@ -32,5 +31,21 @@ RSpec.describe MusicBrainzClient do
 
   describe "#recording" do
     subject!(:response) { described_class.new.recording(id: 'afa019dd-30f0-4053-86e2-603e6ae3c46c') }
+  end
+
+  describe "#work" do
+    subject!(:response) { described_class.new.work('f7136e19-4a8a-42ae-be40-01e9d78b45d5') }
+
+    it 'returns work' do
+      expect(response).to include(:work)
+    end
+  end
+
+  describe "#search_work" do
+    subject!(:response) { described_class.new.search_work(artist: 'Tchaikovsky', name: 'Concerto for Violin and Orchestra in D major, op. 35') }
+
+    it 'returns related works' do
+      expect(response).to include(:work)
+    end
   end
 end

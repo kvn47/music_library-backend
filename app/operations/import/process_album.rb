@@ -28,7 +28,8 @@ module Import
       album = Album.find_by(title: title, artist_id: artist.id)
 
       if album.nil?
-        path = File.join(artist.path, [year, title].join(' - '))
+        folder_name = year.nil? ? title : "#{title} (#{year})"
+        path = File.join(artist.path, folder_name)
         Rails.logger.debug "FileUtils.mkdir_p(#{path})"
         FileUtils.mkdir_p path
         cover = copy_cover(input[:cover], path)
@@ -71,7 +72,8 @@ module Import
       src_path = track_params[:path]
       ext = File.extname src_path
       number = format '%02d', track.number
-      dst_path = File.join album.path, "#{number}. #{track.title}#{ext}"
+      title = track.title.gsub(%r{[:\/]}, '.')
+      dst_path = File.join album.path, "#{number}. #{title}#{ext}"
       Rails.logger.info "Copy #{src_path} to #{dst_path}"
       # FileUtils.mkdir_p album.path
       FileUtils.copy_file src_path, dst_path

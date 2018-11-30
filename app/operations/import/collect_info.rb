@@ -73,9 +73,38 @@ module Import
     def get_musicbrainz_info(import_info)
       mb_client = MusicBrainzClient.new
 
-      import_info[:albums].each do |album|
-        mb_info = mb_client.search_release(artist: album[:artist], title: album[:title])
-        album[:mb_info] = mb_info
+      import_info.each do |info|
+        info[:albums].each do |album|
+          mb_info = mb_client.release(artist: album[:artist], title: album[:title])
+          album[:mb_title] = mb_info[:title]
+          album[:mb_date] = mb_info[:date]
+          album[:mbid] = mb_info[:id]
+
+          album[:tracks].each do |track|
+            mb_track_index = mb_info[:tracks].find_index { |t| t[:number].to_i == track[:number] }
+            mb_track = mb_info[:tracks][mb_track_index]
+            track[:mb_title] = mb_track[:title]
+            track[:mb_length] = mb_track[:mb_length]
+            track[:mbid] = mb_track[:id]
+            track[:mb_url] = "https://musicbrainz.org/recording/#{mb_track[:id]}"
+
+            unless mb_track[:work_part].nil?
+              track[:mb_work_part] = {
+                title: mb_track[:work_part][:title],
+                url: "https://musicbrainz.org/work/#{mb_track[:work_part][:id]}"
+              }
+            end
+
+            unless mb_track[:work].nil?
+              track[:mb_work] = {
+                title: mb_track[:work][:title],
+                url: "https://musicbrainz.org/work/#{mb_track[:work][:id]}"
+              }
+            end
+
+            track[:mb_artists] = mb_track[:artists] unless mb_track[:artists].nil?
+          end
+        end
       end
     end
 

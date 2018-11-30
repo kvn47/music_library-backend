@@ -4,6 +4,7 @@ class CreateArtists < ActiveRecord::Migration[5.1]
       t.string :name, null: false, index: {unique: true}
       t.string :path
       t.string :image
+      t.string :mbid, index: true
 
       t.timestamps
     end

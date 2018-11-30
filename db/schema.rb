@@ -18,9 +18,11 @@ ActiveRecord::Schema.define(version: 2018_01_17_043512) do
     t.string "path"
     t.string "cover"
     t.integer "artist_id"
+    t.string "mbid"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["artist_id"], name: "index_albums_on_artist_id"
+    t.index ["mbid"], name: "index_albums_on_mbid"
     t.index ["title"], name: "index_albums_on_title"
   end
 
@@ -28,8 +30,10 @@ ActiveRecord::Schema.define(version: 2018_01_17_043512) do
     t.string "name", null: false
     t.string "path"
     t.string "image"
+    t.string "mbid"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["mbid"], name: "index_artists_on_mbid"
     t.index ["name"], name: "index_artists_on_name", unique: true
   end
 
@@ -69,15 +73,17 @@ ActiveRecord::Schema.define(version: 2018_01_17_043512) do
   end
 
   create_table "tracks", force: :cascade do |t|
+    t.integer "album_id", null: false
     t.integer "number", null: false
     t.string "title", null: false
     t.string "path"
     t.integer "size"
-    t.integer "album_id", null: false
+    t.integer "length"
+    t.string "mbid"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "length"
     t.index ["album_id"], name: "index_tracks_on_album_id"
+    t.index ["mbid"], name: "index_tracks_on_mbid"
   end
 
   create_table "tracks_exports", id: false, force: :cascade do |t|
