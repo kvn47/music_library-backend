@@ -113,7 +113,7 @@ class MusicBrainzClient
           work_part = WorkPart.new title: mb_work_part[:title],
                                    id: mb_work_part[:id],
                                    track_length: mb_track[:length],
-                                   track_number: mb_track[:number].to_i
+                                   track_number: mb_track[:position].to_i
 
           mb_work_part[:relation_list].each do |work_relation|
             case work_relation[:target_type]

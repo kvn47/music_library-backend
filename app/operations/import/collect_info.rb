@@ -81,6 +81,11 @@ module Import
         info[:albums].each do |album|
           works = mb_client.release(artist: album[:artist], title: album[:title])
 
+          if works.nil?
+            Rails.logger.warn "[WARNING] Release not found: #{album[:artist]} - #{album[:title]}"
+            next
+          end
+
           works.each do |work|
             new_album = album.slice(:artist, :album_artist, :title, :genre, :year, :cover)
             mb_artists = work.artists.map { |artist| artist[:name].split(',')[0] }.join(', ')
@@ -104,7 +109,7 @@ module Import
                             mbid: work_part.id,
                             mb_url: work_part.url
               else
-                Rails.logger.log "[ERROR] Track not found! Work part: #{work_part.to_h}"
+                Rails.logger.error "[ERROR] Track not found! Work part: #{work_part.to_h}"
               end
             end
 
