@@ -23,7 +23,9 @@ module Import
 
     def album!(input)
       artist = input[:artist]
+      album_artist = input[:album_artist]
       title = input[:title]
+      title = "#{title} [#{album_artist}]" if album_artist.present?
       year = input[:year]
       album = Album.find_by(title: title, artist_id: artist.id)
 
@@ -33,7 +35,7 @@ module Import
         Rails.logger.debug "FileUtils.mkdir_p(#{path})"
         FileUtils.mkdir_p path
         cover = copy_cover(input[:cover], path)
-        album = Album.new(artist: artist, title: title, path: path, year: year, cover: cover)
+        album = Album.new(title: title, artist: artist, album_artist: album_artist, path: path, year: year, cover: cover)
       end
 
       result = input.merge album: album

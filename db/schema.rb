@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 2018_01_17_043512) do
     t.string "path"
     t.string "cover"
     t.integer "artist_id"
+    t.string "album_artist"
     t.string "mbid"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -34,6 +34,7 @@ module Import
           albums: [
             {
               artist: cue_sheet.performer,
+              album_artist: nil,
               title: cue_sheet.title,
               genre: cue_sheet.genre,
               cover: find_cover(path),
@@ -56,6 +57,7 @@ module Import
           albums: [
             {
               artist: tracks.first.artist,
+              album_artist: nil,
               title: tracks.first.album,
               genre: tracks.first.genre,
               year: tracks.first.year,
@@ -74,37 +76,43 @@ module Import
       mb_client = MusicBrainzClient.new
 
       import_info.each do |info|
+        new_albums = []
+
         info[:albums].each do |album|
-          mb_info = mb_client.release(artist: album[:artist], title: album[:title])
-          album[:mb_title] = mb_info[:title]
-          album[:mb_date] = mb_info[:date]
-          album[:mbid] = mb_info[:id]
+          works = mb_client.release(artist: album[:artist], title: album[:title])
 
-          album[:tracks].each do |track|
-            mb_track_index = mb_info[:tracks].find_index { |t| t[:number].to_i == track[:number] }
-            mb_track = mb_info[:tracks][mb_track_index]
-            track[:mb_title] = mb_track[:title]
-            track[:mb_length] = mb_track[:mb_length]
-            track[:mbid] = mb_track[:id]
-            track[:mb_url] = "https://musicbrainz.org/recording/#{mb_track[:id]}"
+          works.each do |work|
+            new_album = album.slice(:artist, :album_artist, :title, :genre, :year, :cover)
+            mb_artists = work.artists.map { |artist| artist[:name].split(',')[0] }.join(', ')
 
-            unless mb_track[:work_part].nil?
-              track[:mb_work_part] = {
-                title: mb_track[:work_part][:title],
-                url: "https://musicbrainz.org/work/#{mb_track[:work_part][:id]}"
-              }
+            new_album.merge! mb_title: work.title,
+                             mb_date: work.composer&.end,
+                             mbid: work.id,
+                             mb_url: work.url,
+                             mb_composer: work.composer.name,
+                             mb_composer_url: work.composer.url,
+                             mb_artists: mb_artists
+
+            new_album[:tracks] = work.parts.map do |work_part|
+              track_index = album[:tracks].index { |t| t[:number] == work_part.track_number }
+              track = album[:tracks].delete_at(track_index)
+
+              if track
+                track.merge mb_title: work_part.title[/.* ([IVX]+\..*)/, 1],
+                            number: work_part.number,
+                            mb_length: work_part.track_length,
+                            mbid: work_part.id,
+                            mb_url: work_part.url
+              else
+                Rails.logger.log "[ERROR] Track not found! Work part: #{work_part.to_h}"
+              end
             end
 
-            unless mb_track[:work].nil?
-              track[:mb_work] = {
-                title: mb_track[:work][:title],
-                url: "https://musicbrainz.org/work/#{mb_track[:work][:id]}"
-              }
-            end
-
-            track[:mb_artists] = mb_track[:artists] unless mb_track[:artists].nil?
+            new_albums << new_album
           end
         end
+
+        info[:albums] = new_albums if new_albums.any?
       end
     end
 
