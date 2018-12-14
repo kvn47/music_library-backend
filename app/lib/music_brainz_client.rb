@@ -19,10 +19,12 @@ class MusicBrainzClient
     Mash.new(response).metadata
   end
 
-  def release(mbid: nil, artist: nil, title: nil, **params)
+  def release(mbid: nil, title: nil, artist: nil, **params)
     return lookup_release(mbid, params) if mbid
-    releases = search_release(artist: artist, title: title)
+
+    releases = search_release(title: title, artist: artist)
     return nil if releases.empty?
+
     lookup_release(releases[0][:id], params)
   end
 
@@ -47,6 +49,33 @@ class MusicBrainzClient
     end
   end
 
+  def work(mbid: nil, title: nil, artist: nil, **params)
+    return lookup_work(mbid, params) if mbid
+
+    works = search_work(title: title, artist: artist)
+    return nil if works.empty?
+
+    lookup_work(works[0][:id], params)
+  end
+
+  def lookup_work(mbid, **params)
+    result = call("work/#{mbid}", params.merge(inc: 'artist-rels+work-rels'))
+    parse_work result[:work]
+  end
+
+  def search_work(title:, artist:)
+    result = call('work', query: "name:#{title} AND artist:#{artist}")
+
+    case result[:work_list][:count]
+    when '0'
+      []
+    when '1'
+      [result[:work_list][:work]]
+    else
+      result[:work_list][:work]
+    end
+  end
+
   def artist(mbid, **params)
     call "artist/#{mbid}", params.merge(inc: 'recordings+releases+release-groups')
   end
@@ -57,15 +86,6 @@ class MusicBrainzClient
 
   def recording(mbid, **params)
     call "recording/#{mbid}", params
-  end
-
-  def work(mbid, **params)
-    result = call("work/#{mbid}", params.merge(inc: 'artist-rels'))
-    result[:work]
-  end
-
-  def search_work(artist:, name:)
-    call('work', query: "artist:#{artist} AND name:#{name}")
   end
 
   private
@@ -95,6 +115,7 @@ class MusicBrainzClient
   end
 
   def parse_release(release)
+    # TODO: add release url
     works = {}
 
     release.dig(:medium_list, :medium, :track_list, :track)&.each do |mb_track|
@@ -115,13 +136,20 @@ class MusicBrainzClient
                                    track_length: mb_track[:length],
                                    track_number: mb_track[:position].to_i
 
-          mb_work_part[:relation_list].each do |work_relation|
-            case work_relation[:target_type]
+          mb_work_part[:relation_list].each do |work_part_relation_item|
+            work_part_relation = work_part_relation_item[:relation]
+
+            case work_part_relation_item[:target_type]
             when 'artist'
-              mb_composer = work_relation[:relation] if work_relation[:relation][:type] == 'composer'
+              mb_composer = work_part_relation if work_part_relation[:type] == 'composer'
             when 'work'
-              mb_work = work_relation[:relation][:work]
-              work_part.number = work_relation[:relation][:ordering_key].to_i
+              if work_part_relation.kind_of?(Array)
+                work_part_relation = work_part_relation.find do |rel|
+                  rel[:type] == 'parts'
+                end
+              end
+              mb_work = work_part_relation[:work]
+              work_part.number = work_part_relation[:ordering_key].to_i
             end
           end
         end
@@ -130,17 +158,19 @@ class MusicBrainzClient
       if works.key? mb_work[:id]
         works[mb_work[:id]].parts << work_part unless work_part.nil?
       else
-        work = Work.new title: mb_work[:title], id: mb_work[:id]
+        work = Work.new title: mb_work[:title], artists: [], id: mb_work[:id]
 
         work.composer = Composer.new name: mb_composer[:artist][:name],
                                      begin: mb_composer[:begin],
                                      end: mb_composer[:end],
                                      id: mb_composer[:artist][:id]
 
-        work.artists = mb_artists.map do |mb_artist|
+        mb_artists.each do |mb_artist|
+          next unless mb_artist.type.in? %w[instrument conductor]
+
           artist = Artist.new name: mb_artist[:artist][:sort_name], id: mb_artist[:artist][:id]
-          artist.attributes = mb_artist.dig(:attribute_list, :attribute) if mb_artist[:type] == 'instrument'
-          artist
+          artist.attributes = mb_artist.dig(:attribute_list, :attribute) if mb_artist.type == 'instrument'
+          work.artists << artist
         end
 
         work.parts = [work_part]
@@ -148,7 +178,54 @@ class MusicBrainzClient
       end
     end
 
-    works.values
+    {
+      url: "https://musicbrainz.org/release/#{release[:id]}",
+      works: works.values
+    }
+  end
+
+  def parse_work(mb_work)
+    work = {
+      title: mb_work[:title],
+      url: "https://musicbrainz.org/work/#{mb_work[:id]}"
+    }
+
+    composer = nil
+    parts = []
+
+    mb_work[:relation_list].each do |relation_list|
+      case relation_list[:target_type]
+      when 'artist'
+        if relation_list[:relation].kind_of?(Array)
+          relation_list[:relation].each do |relation_item|
+            composer = relation_item if relation_item[:type] == 'composer'
+          end
+        elsif relation_list.dig(:relation, :type) == 'composer'
+          composer = relation_list[:relation]
+        end
+      when 'work'
+        if relation_list[:relation].kind_of?(Array)
+          relation_list[:relation].each do |relation_item|
+            next unless relation_item[:type] == 'parts'
+
+            parts << {
+              number: relation_item[:ordering_key].to_i,
+              title: relation_item[:work][:title],
+              url: "https://musicbrainz.org/work/#{relation_item[:work][:id]}"
+            }
+          end
+        end
+      end
+    end
+
+    if composer
+      work[:composer] = composer[:artist][:sort_name]
+      work[:composer_url] = "https://musicbrainz.org/artist/#{composer[:artist][:id]}"
+      work[:date] = composer[:end]
+    end
+
+    work[:parts] = parts
+    work
   end
 
   def extract_list(list, key)
