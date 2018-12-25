@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require '/Users/vova/Projects/MusicLibrary/backend-rails/lib/structure_album_files.rb'
+
+StructureAlbumFiles.(ARGV[0])
