@@ -13,6 +13,15 @@ class ToolsController < ApplicationController
     end
   end
 
+  def search_artist
+    artists = MusicBrainzClient.new.search_artist(name: params[:name])
+    render json: artists
+    # run SearchArtist do |m|
+    #   m.success { |result| render json: result }
+    #   m.failure(&method(:render_error))
+    # end
+  end
+
   def organize_files
     run OrganizeAlbumFiles do |m|
       m.success { |_| render json: {messages: 'ok'}, status: :ok }

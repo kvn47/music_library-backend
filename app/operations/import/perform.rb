@@ -13,12 +13,12 @@ module Import
       path = input[:path]
       Dir.chdir path
 
-      input[:import_sources].each do |import_source|
-        if import_source.key? :cue
-          prefix = "#{File.basename(import_source[:file], '.*')} - "
-          split_file import_source[:file], import_source[:cue], prefix
+      input[:source_infos].each do |source_info|
+        if source_info.key? :cue
+          prefix = "#{File.basename(source_info[:file], '.*')} - "
+          split_file source_info[:file], source_info[:cue], prefix
 
-          import_source[:albums].each do |album|
+          source_info[:albums].each do |album|
             album[:tracks].collect! do |track|
               cue_track = format('%02d', track.delete(:cue_track))
               track[:path] = File.join path, "#{prefix + cue_track}.flac"
@@ -28,7 +28,7 @@ module Import
             albums << album
           end
         else
-          import_source[:albums].each do |album|
+          source_info[:albums].each do |album|
             album[:tracks].collect! do |track|
               track[:path] = File.join path, track[:file]
               track

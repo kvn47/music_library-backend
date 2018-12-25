@@ -17,17 +17,19 @@ class CollectInfo < ATransaction
   end
 
   def perform(input)
-    import_info = []
+    source_infos = []
     path = input[:path]
     Dir.chdir path
 
     Dir['**/*.cue'].each do |cue_file|
-      file = Dir["#{File.basename(cue_file, '.cue')}.{flac,ape}"][0]
+      file = Dir["#{cue_file.gsub('cue', '')}{flac,ape}"][0]
+      next if file.nil?
+
       cue_sheet = RubyCue::Cuesheet.new(File.read(cue_file))
       cue_sheet.parse!
       tracks = track_infos_from_cue(cue_sheet)
 
-      import_info << {
+      source_infos << {
         cue: cue_file,
         file: file,
         images: find_images(path),
@@ -44,50 +46,63 @@ class CollectInfo < ATransaction
       }
     end
 
-    if import_info.empty?
-      tracks = []
+    if source_infos.empty?
+      albums = {}
 
       Dir['**/*.{flac,ape,mp3}'].each do |file|
         ext = File.extname file
         track_info = ext == '.flac' ? track_info_from_flac(file) : track_info_from_basic(file)
-        tracks << track_info
+
+        album_track = {number: track_info.number, title: track_info.title, file: track_info.file}
+
+        if albums.key?(track_info.album)
+          albums[track_info.album][:tracks] << album_track
+        else
+          album = {
+            title: track_info.album,
+            artist: track_info.artist,
+            album_artist: nil,
+            genre: track_info.genre,
+            year: track_info.year,
+            cover: nil,
+            tracks: [album_track]
+          }
+
+          albums.store(album[:title], album)
+        end
       end
 
-      import_info << {
+      source_infos << {
         images: find_images(path),
-        albums: [
-          {
-            artist: tracks.first.artist,
-            album_artist: nil,
-            title: tracks.first.album,
-            genre: tracks.first.genre,
-            year: tracks.first.year,
-            cover: nil,
-            tracks: tracks.map { |track| {number: track.number, title: track.title, file: track.file} }
-          }
-        ]
+        albums: albums.values
       }
     end
 
-    return Failure(:info_not_found) if import_info.empty?
-    Success(import_info: import_info, search_artist: input[:artist], search_album: input[:album])
+    return Failure(:info_not_found) if source_infos.empty?
+    Success(collect_mb_info: input[:collect_mb_info],
+            source_infos: source_infos,
+            search_artist: input[:artist],
+            search_album: input[:album])
   end
 
-  def get_musicbrainz_info(import_info:, search_artist: nil, search_album: nil)
+  def get_musicbrainz_info(collect_mb_info:, source_infos:, search_artist: nil, search_album: nil)
+    return unless collect_mb_info == 'true'
+
     mb_client = MusicBrainzClient.new
 
-    import_info.each do |info|
+    source_infos.each do |info|
       new_albums = []
 
       info[:albums].each do |album|
-        release = mb_client.release(artist: album[:artist], title: album[:title])
+        release = mb_client.release(artist: search_artist || album[:artist], title: search_album || album[:title])
 
         if release.nil?
           Rails.logger.warn "[WARNING] Release not found: #{album[:artist]} - #{album[:title]}"
           next
         end
 
-        info[:release_url] = release[:url]
+        info[:mb_release] = release[:title]
+        info[:mb_release_url] = release[:url]
 
         release[:works].each do |work|
           new_album = album.slice(:artist, :album_artist, :title, :genre, :year, :cover)
@@ -98,10 +113,11 @@ class CollectInfo < ATransaction
                            mbid: work.id,
                            mb_url: work.url,
                            mb_composer: work.composer.name,
+                           mb_composer_id: work.composer.id,
                            mb_composer_url: work.composer.url,
                            mb_artists: mb_artists
 
-          new_album[:tracks] = work.parts.map do |work_part|
+          tracks = work.parts.map do |work_part|
             track_index = album[:tracks].index { |t| t[:number] == work_part.track_number }
             track = album[:tracks].delete_at(track_index) if track_index
 
@@ -113,8 +129,11 @@ class CollectInfo < ATransaction
                           mb_url: work_part.url
             else
               Rails.logger.error "[ERROR] Track not found! Work part: #{work_part.to_h}"
+              next
             end
           end
+
+          new_album[:tracks] = tracks.compact
 
           new_albums << new_album
         end

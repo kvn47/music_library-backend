@@ -41,6 +41,6 @@ module ActionMethods
     }.fetch(error, 400)
 
     error_message = I18n.t("errors.operation.#{error}", default: error.to_s)
-    render json: {error: error_message}, status: status
+    render json: {message: error_message}, status: status
   end
 end

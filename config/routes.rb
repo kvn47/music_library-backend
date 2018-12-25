@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     get 'tools/collect_info', to: 'tools#collect_info'
     get 'tools/find_work_info', to: 'tools#find_work_info'
     post 'tools/organize_files', to: 'tools#organize_files'
+    get 'tools/search_artist', to: 'tools#search_artist'
 
     resources :artists, shallow: true do
       resources :albums, shallow: true do

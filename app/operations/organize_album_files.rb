@@ -7,7 +7,7 @@ class OrganizeAlbumFiles < ATransaction
 
   private
 
-  def process(path:, source_infos:, dst_path: nil, **)
+  def process(path:, source_infos:, dst_path: nil, copy_files:, **)
     dst_path = File.expand_path('..', path) if dst_path.blank?
     FileUtils.cd path
 
@@ -24,18 +24,19 @@ class OrganizeAlbumFiles < ATransaction
           album_path = make_album_path(album, dst_path)
 
           album['tracks'].each do |track|
-            file_name = "#{prefix + track['cue_track']}.flac"
+            file_name = "#{prefix + format('%02d', track['cue_track'])}.flac"
 
             if File.exists?(file_name)
               write_tags(file_name, track, album)
-              dst_file_path = File.join(album_path, "#{track['number']}. #{track['title']}.flac")
-              FileUtils.mv(file_name, dst_file_path)
+              dst_file_name = "#{format('%02d', track['number'])}. #{track['title']}.flac"
+              dst_file_path = File.join(album_path, dst_file_name)
+              FileUtils.move(file_name, dst_file_path)
             else
-              Rails.logger.log("[ERROR] File not found: #{file_name}")
+              Rails.logger.error("[ERROR] File not found: #{file_name}")
             end
           end
 
-          FileUtils.cp(album['cover'], album_path)
+          FileUtils.cp(album['cover'], album_path) if album['cover'].present?
         end
       else
         albums.each do |album|
@@ -44,10 +45,15 @@ class OrganizeAlbumFiles < ATransaction
           album['tracks'].each do |track|
             write_tags(track['file'], track, album)
             dst_file_path = File.join(album_path, "#{track['number']}. #{track['title']}#{File.extname(track['file'])}")
-            FileUtils.copy_file(track['file'], dst_file_path)
+
+            if copy_files == 'true'
+              FileUtils.copy_file(track['file'], dst_file_path)
+            else
+              FileUtils.move(track['file'], dst_file_path)
+            end
           end
 
-          FileUtils.cp(album['cover'], album_path)
+          FileUtils.cp(album['cover'], album_path) if album['cover'].present?
         end
       end
     end
@@ -76,6 +82,7 @@ class OrganizeAlbumFiles < ATransaction
           tag.album = album['title']
           tag.year = album['year'].to_i
           tag.title = track['title']
+          tag.genre = album['genre']
           tag.track = track['number']
         end
 
