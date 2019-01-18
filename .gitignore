@@ -30,3 +30,6 @@
 
 .env.production
 .env*.local
+
+.ruby-version
+.tool-versions
