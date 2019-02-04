@@ -1,14 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.5.1'
-
-gem 'carrierwave'
-gem 'mini_magick', '~> 4.8'
-gem 'rubycue'
-gem 'taglib-ruby'
-gem 'httparty'
-gem 'hashie'
+ruby '2.5.3'
 
 gem 'dry-configurable'
 gem 'dry-transaction'
@@ -17,9 +10,18 @@ gem 'multi_json'
 gem 'representable'
 
 gem 'rails', '~> 5.2.0'
+gem 'grape'
+gem 'grape-entity'
 gem 'sqlite3'
 # gem 'rack-cors'
 # gem 'redis', '~> 4.0'
+
+gem 'carrierwave'
+gem 'mini_magick', '~> 4.8'
+gem 'rubycue'
+gem 'taglib-ruby'
+gem 'httparty'
+gem 'hashie'
 
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'dotenv-rails'
@@ -38,6 +40,7 @@ group :development do
 end
 
 group :test do
+  gem 'grape-entity-matchers'
   gem 'rspec-json_expectations', '~> 2.1.0'
   gem 'shoulda-matchers', '~> 3.0'
   gem 'factory_bot_rails', '~> 4.8.2'

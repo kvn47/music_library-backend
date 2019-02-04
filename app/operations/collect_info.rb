@@ -5,7 +5,7 @@ require 'shellwords'
 class CollectInfo < ATransaction
   check :validate
   step :perform
-  tee :get_musicbrainz_info
+  map :get_musicbrainz_info
 
   private
 
@@ -86,7 +86,7 @@ class CollectInfo < ATransaction
   end
 
   def get_musicbrainz_info(collect_mb_info:, source_infos:, search_artist: nil, search_album: nil)
-    return unless collect_mb_info == 'true'
+    return source_infos unless collect_mb_info
 
     mb_client = MusicBrainzClient.new
 
@@ -141,6 +141,8 @@ class CollectInfo < ATransaction
 
       info[:albums] = new_albums if new_albums.any?
     end
+
+    source_infos
   end
 
   def find_images(path)
