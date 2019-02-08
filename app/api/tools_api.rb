@@ -10,9 +10,7 @@ class ToolsAPI < Grape::API
   end
   get 'collect_info' do
     run_operation CollectInfo do |m|
-      m.success do |result|
-        present(result, with: MusicInfoPresenter)
-      end
+      m.success { |result| present(result, with: MusicInfoPresenter) }
       m.failure(&method(:present_error))
     end
   end

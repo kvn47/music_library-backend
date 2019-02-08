@@ -1,14 +1,13 @@
 require 'rails_helper'
 
-RSpec.describe 'Import API', :import do
+RSpec.describe ImportAPI, :import do
   describe 'GET /api/albums_import/new' do
-    subject do
+    subject! do
       get '/api/albums_import/new', params: {path: import_path('Tchaikovsky, Myaskovsky - Violin Concertos - Repin, Gergiev')}
-      response.body
     end
 
     it 'returns albums' do
-      is_expected.to include_json([])
+      expect(response.body).to include_json([])
     end
   end
 end

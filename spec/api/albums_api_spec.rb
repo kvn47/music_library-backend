@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe 'Albums API' do
+RSpec.describe AlbumsAPI do
   describe 'GET /api/artists/:id/albums' do
     subject do
-      get "/api/artists/#{artist.id}/albums"
+      get "/api/albums", params: {artist_id: artist.id}
       response.body
     end
 

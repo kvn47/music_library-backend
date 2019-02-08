@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Artists API' do
+RSpec.describe ArtistsAPI do
   describe "GET /api/artists" do
     subject do
       get '/api/artists'
@@ -29,42 +29,33 @@ RSpec.describe 'Artists API' do
   end
 
   describe 'POST /api/artists' do
-    subject do
-      post '/api/artists', params: params
-      response.body
-    end
+    subject! { post '/api/artists', params: params }
 
     let(:params) { attributes_for :artist }
 
     it 'returns created artist' do
-      is_expected.to include_json(name: params[:name])
+      expect(response.body).to include_json(name: params[:name])
     end
   end
 
   describe 'PATCH /api/artists/:id' do
-    subject do
+    subject! do
       artist = create :artist
       patch "/api/artists/#{artist.id}", params: params
-      response.body
     end
 
     let(:params) { {name: 'New artist'} }
 
     it 'returns updated artist' do
-      is_expected.to include_json(name: params[:name])
+      expect(response.body).to include_json(name: params[:name])
     end
   end
 
   describe 'DELETE /api/artists/:id' do
-    subject do
-      delete "/api/artists/#{artist.id}"
-      response.body
-    end
+    subject! { delete "/api/artists/#{artist.id}" }
 
     let(:artist) { create :artist }
 
-    it "returns artist's id" do
-      is_expected.to include_json(id: artist.id)
-    end
+    include_examples "successful response"
   end
 end
