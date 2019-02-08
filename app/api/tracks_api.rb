@@ -23,8 +23,8 @@ class TracksAPI < Grape::API
       optional :search, type: String
     end
     get do
-      tracks = Track.includes(album: :artist).query(**action_params)
-      present tracks
+      tracks = Track.includes(album: :artist).query(**declared_params)
+      present_model tracks
     end
 
     route_param :id, type: Integer do
