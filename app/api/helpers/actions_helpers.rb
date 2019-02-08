@@ -12,7 +12,7 @@ module ActionsHelpers
     model.update(declared_params) ? present_model(model) : present_model_errors(model)
   end
 
-  def base_destroy_action
+  def base_delete_action
     model = find_model
 
     model.destroy ? status(:ok) : present_model_errors(model)
@@ -20,7 +20,7 @@ module ActionsHelpers
 
   def base_index_action
     collection = model_class.query(**declared_params)
-    present collection
+    present_model collection
   end
 
   def base_show_action

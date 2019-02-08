@@ -1,16 +1,11 @@
-# require 'devise/jwt/test_helpers'
-#
-# RSpec.shared_context 'with json headers' do
-#   let(:headers) { {'Accept': 'application/json', 'Content-Type': 'application/json'} }
-# end
-#
-# RSpec.shared_context 'with authenticated user', json: true do
-#   let(:current_user) { create :user }
-#
-#   let(:auth_headers) { Devise::JWT::TestHelpers.auth_headers headers, current_user }
-# end
-#
-# RSpec.configure do |config|
-#   config.include_context 'with authenticated user', auth: :user
-#   config.include_context 'with json headers', json: true
-# end
+RSpec.shared_examples "successful response" do
+  it "has http status 200 (ok)" do
+    expect(response).to have_http_status(:ok), "[#{response.status}] #{response.body}"
+  end
+end
+
+RSpec.shared_examples "successful create response" do
+  it "has http status 201 (created)" do
+    expect(response).to have_http_status(:created), "[#{response.status}] #{response.body}"
+  end
+end

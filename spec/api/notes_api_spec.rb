@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Notes API' do
+RSpec.describe NotesAPI do
   describe 'GET /api/notes' do
     before do
       create_list :note, 2
@@ -35,23 +35,23 @@ RSpec.describe 'Notes API' do
 
     let(:params) { attributes_for(:note) }
 
-    it { is_expected.to have_http_status(:success) }
+    include_examples "successful create response"
 
     it 'returns created note' do
       expect(response.body).to include_json(params.as_json)
     end
   end
 
-  describe 'PUT /api/notes/:id' do
+  describe 'PATCH /api/notes/:id' do
     subject! do
-      put "/api/notes/#{note.id}", params: params
+      patch "/api/notes/#{note.id}", params: params
       response
     end
 
     let(:note) { create :note }
     let(:params) { {artist: 'Another Artist', album: 'Another Album'} }
 
-    it { is_expected.to have_http_status(:success) }
+    include_examples "successful response"
 
     it 'returns updated note' do
       expect(response.body).to include_json(params.as_json)
@@ -66,10 +66,6 @@ RSpec.describe 'Notes API' do
     
     let(:note) { create :note }
     
-    it { is_expected.to have_http_status(:success) }
-    
-    it 'returns deleted note' do
-      expect(response.body).to include_json(id: note.id)
-    end
+    include_examples "successful response"
   end
 end
