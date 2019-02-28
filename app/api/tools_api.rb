@@ -33,6 +33,20 @@ class ToolsAPI < Grape::API
   end
 
   desc 'Organize files'
+  params do
+    requires :path, type: String
+    optional :dst_path, type: String
+    optional :copy_files, type: Boolean
+    requires :source_infos, type: JSON
+
+    # requires :source_infos, type: Array do
+    #   optional :cue, type: String
+    #   optional :file, type: String
+    #   requires :albums, type: Array do
+    #
+    #   end
+    # end
+  end
   post 'organize_files' do
     run_operation OrganizeAlbumFiles do |m|
       m.success { |_| status(:ok) }
