@@ -34,4 +34,5 @@
 .env*.local
 
 .ruby-version
-.tool-versions
+/.generators
+/.rakeTasks
