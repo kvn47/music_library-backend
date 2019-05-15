@@ -164,8 +164,10 @@ class MusicBrainzClient
                   rel[:type] == 'parts'
                 end
               end
-              mb_work = work_part_relation[:work]
-              work_part.number = work_part_relation[:ordering_key].to_i
+              if work_part_relation.present?
+                mb_work = work_part_relation[:work]
+                work_part.number = work_part_relation[:ordering_key].to_i
+              end
             else
               work_part_relation_item
             end
