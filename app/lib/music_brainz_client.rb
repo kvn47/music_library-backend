@@ -137,7 +137,11 @@ class MusicBrainzClient
       mb_track.dig(:recording, :relation_list)&.each do |recording_relation|
         case recording_relation[:target_type]
         when 'artist'
-          mb_artists = recording_relation[:relation]
+          mb_artists = if recording_relation[:relation].kind_of?(Array)
+                         recording_relation[:relation]
+                       else
+                         [recording_relation[:relation]]
+                       end
         when 'work'
           mb_work_part = recording_relation[:relation][:work]
 
