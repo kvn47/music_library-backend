@@ -25,7 +25,7 @@ Things you may want to cover:
 
 **MacOS** 
 
-brew install cuetools shntool flac
+brew install cuetools shntool flac taglib
 
 mv /usr/local/bin/cuetag.sh /usr/local/bin/cuetag
 
