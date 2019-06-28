@@ -1,4 +1,4 @@
-class Tracklist::Clear < BaseOperation
+class Tracklist::Clear < ATransaction
   step :find_tracklist
   step :process
 

@@ -1,4 +1,4 @@
-class Tracklist::RemoveTrack < BaseOperation
+class Tracklist::RemoveTrack < ATransaction
   step :find_tracklist
   step :process
 
