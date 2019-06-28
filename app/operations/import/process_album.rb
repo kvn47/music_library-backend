@@ -1,4 +1,4 @@
-require 'taglib'
+# require 'taglib'
 require 'shellwords'
 
 module Import
