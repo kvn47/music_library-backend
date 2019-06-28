@@ -1,6 +1,7 @@
 class CreateNotes < ActiveRecord::Migration[5.1]
   def change
     create_table :notes do |t|
+      t.integer :position
       t.string :kind
       t.string :artist
       t.string :album

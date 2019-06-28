@@ -12,12 +12,15 @@
 
 ActiveRecord::Schema.define(version: 2018_01_17_043512) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "albums", force: :cascade do |t|
     t.string "title", null: false
     t.integer "year"
     t.string "path"
     t.string "cover"
-    t.integer "artist_id"
+    t.bigint "artist_id"
     t.string "album_artist"
     t.string "mbid"
     t.datetime "created_at", null: false
@@ -48,6 +51,7 @@ ActiveRecord::Schema.define(version: 2018_01_17_043512) do
   end
 
   create_table "notes", force: :cascade do |t|
+    t.integer "position"
     t.string "kind"
     t.string "artist"
     t.string "album"
@@ -60,8 +64,8 @@ ActiveRecord::Schema.define(version: 2018_01_17_043512) do
   end
 
   create_table "tracklistings", id: false, force: :cascade do |t|
-    t.integer "tracklist_id"
-    t.integer "track_id"
+    t.bigint "tracklist_id"
+    t.bigint "track_id"
     t.index ["track_id"], name: "index_tracklistings_on_track_id"
     t.index ["tracklist_id"], name: "index_tracklistings_on_tracklist_id"
   end
@@ -74,7 +78,7 @@ ActiveRecord::Schema.define(version: 2018_01_17_043512) do
   end
 
   create_table "tracks", force: :cascade do |t|
-    t.integer "album_id", null: false
+    t.bigint "album_id", null: false
     t.integer "number", null: false
     t.string "title", null: false
     t.string "path"
@@ -88,10 +92,16 @@ ActiveRecord::Schema.define(version: 2018_01_17_043512) do
   end
 
   create_table "tracks_exports", id: false, force: :cascade do |t|
-    t.integer "export_list_id"
-    t.integer "track_id"
+    t.bigint "export_list_id"
+    t.bigint "track_id"
     t.index ["export_list_id"], name: "index_tracks_exports_on_export_list_id"
     t.index ["track_id"], name: "index_tracks_exports_on_track_id"
   end
 
+  add_foreign_key "albums", "artists"
+  add_foreign_key "tracklistings", "tracklists"
+  add_foreign_key "tracklistings", "tracks"
+  add_foreign_key "tracks", "albums"
+  add_foreign_key "tracks_exports", "export_lists"
+  add_foreign_key "tracks_exports", "tracks"
 end
