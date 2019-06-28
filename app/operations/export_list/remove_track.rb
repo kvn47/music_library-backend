@@ -2,8 +2,6 @@ class ExportList::RemoveTrack < ATransaction
   try :find_export_list, catch: ActiveRecord::RecordNotFound
   try :find_track, catch: ActiveRecord::RecordNotFound
   step :process!
-  step :message!
-  failure :error!
 
   private
 
