@@ -12,14 +12,14 @@ gem 'representable'
 gem 'rails', '~> 5.2.0'
 gem 'grape'
 gem 'grape-entity'
-gem 'sqlite3'
-# gem 'rack-cors'
+gem 'pg'
+gem 'rack-cors'
 # gem 'redis', '~> 4.0'
 
 gem 'carrierwave'
 gem 'mini_magick', '~> 4.8'
 gem 'rubycue'
-gem 'taglib-ruby'
+gem 'taglib-ruby', group: :development
 gem 'httparty'
 gem 'hashie'
 
