@@ -61,5 +61,6 @@ end
 # end
 
 group :production do
-  gem 'passenger'
+  # gem 'passenger'
+  gem 'puma'
 end

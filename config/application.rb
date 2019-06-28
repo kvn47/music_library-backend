@@ -48,7 +48,7 @@ module MusicLibrary
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins 'http://localhost:8000', 'https://music-library-47.web.app', 'https://music-library-47.firebaseapp.com'
-        resources '*', headers: :any, methods: %i[get post options]
+        resource '*', headers: :any, methods: %i[get post options]
       end
     end
   end
