@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "4928f37045f6ab781d55",
+    "revision": "4ec722c7e93a5f675013",
     "url": "css/app.3c291562.css"
   },
   {
@@ -60,7 +60,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.0509ab09.woff2"
   },
   {
-    "revision": "b1b94fc18a04e0e62de111d701e463f1",
+    "revision": "7a1d21d4b9915141e59e5a6c32a88e09",
     "url": "index.html"
   },
   {
@@ -104,8 +104,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "js/9a0f270c.55fb3b55.js"
   },
   {
-    "revision": "4928f37045f6ab781d55",
-    "url": "js/app.13bbdb7a.js"
+    "revision": "4ec722c7e93a5f675013",
+    "url": "js/app.dd10d2a9.js"
   },
   {
     "revision": "6a04f322e7d6e8db384c",
@@ -188,7 +188,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "statics/icons/ms-icon-144x144.png"
   },
   {
-    "revision": "d41d8cd98f00b204e9800998ecf8427e",
+    "revision": "d6358348a1adef0ecac3bd04e5b0c24e",
     "url": "statics/icons/safari-pinned-tab.svg"
   },
   {
