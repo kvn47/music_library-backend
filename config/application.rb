@@ -45,10 +45,15 @@ module MusicLibrary
     config.paths.add File.join('app', 'api'), glob: File.join('**', '*.rb')
     config.autoload_paths += Dir[Rails.root.join('app', 'api', '*')]
 
-    config.middleware.insert_before 0, Rack::Cors do
+    config.middleware.insert_before ActionDispatch::Static, Rack::Cors do
       allow do
-        origins 'http://localhost:8000', 'http://localhost:8080', 'https://muz-lib.herokuapp.com', 'https://music-library-47.web.app', 'https://music-library-47.firebaseapp.com'
-        resource '*', headers: :any, methods: %i[get post options]
+        origins 'http://localhost:8000',
+                'http://localhost:8080',
+                'https://muz-lib.herokuapp.com',
+                'https://music-library-47.web.app',
+                'https://music-library-47.firebaseapp.com'
+
+        resource '*', headers: :any, methods: :any
       end
     end
   end

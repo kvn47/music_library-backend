@@ -15,12 +15,19 @@
 #
 
 class Note < ApplicationRecord
-  KINDS = %w[listen download keep await].freeze
+  KINDS = %w[listen download keep await archive].freeze
 
   scope :ordered, -> { order :created_at }
+  scope :released, -> { where(kind: 'await').where('release_date <= ?', Date.current) }
 
-  def self.query(search: nil, **)
+  def self.query(kind: nil, search: nil, **)
     notes = ordered
+
+    if kind
+      notes = notes.where(kind: kind)
+    else
+      notes = notes.released
+    end
 
     if search
       search.chomp.split(/\s+/).each do |word|

@@ -24,6 +24,7 @@ class NotesAPI < Grape::API
 
     desc 'Returns notes'
     params do
+      optional :kind, type: String, values: Note::KINDS
       optional :search, type: String
     end
     get do
