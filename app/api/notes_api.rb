@@ -41,7 +41,7 @@ class NotesAPI < Grape::API
       params do
         use :note_params
       end
-      patch do
+      put do
         base_update_action
       end
 
