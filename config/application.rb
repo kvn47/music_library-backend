@@ -47,11 +47,7 @@ module MusicLibrary
 
     config.middleware.insert_before ActionDispatch::Static, Rack::Cors do
       allow do
-        origins 'http://localhost:8000',
-                'http://localhost:8080',
-                'https://muz-lib.herokuapp.com',
-                'https://music-library-47.web.app',
-                'https://music-library-47.firebaseapp.com'
+        origins 'https://muz-lib.herokuapp.com'
 
         resource '*', headers: :any, methods: :any
       end
