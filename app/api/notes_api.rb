@@ -22,13 +22,23 @@ class NotesAPI < Grape::API
       base_create_action
     end
 
-    desc 'Returns notes'
+    desc 'Returns released notes'
     params do
-      optional :kind, type: String, values: Note::KINDS
       optional :search, type: String
     end
     get do
-      base_index_action
+      notes = Note.released
+      present_model notes
+    end
+
+    route_param :kind, type: String, values: Note::KINDS do
+      desc 'Returns notes of kind'
+      params do
+        optional :search, type: String
+      end
+      get do
+        base_index_action
+      end
     end
 
     route_param :id, type: Integer do

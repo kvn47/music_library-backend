@@ -3,7 +3,7 @@ defaults: &defaults
   import_sources:
     - '/Users/vova/Downloads'
     - '/Volumes/MUSIC'
-    - '/Volumes/T32'
+    - '/Volumes/MUSIC2'
 
 development:
   <<: *defaults
