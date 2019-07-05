@@ -1,4 +1,4 @@
-# require 'taglib'
+require 'taglib'
 require 'rubycue'
 require 'shellwords'
 
@@ -51,8 +51,7 @@ class CollectInfo < ATransaction
       albums = {}
 
       Dir['**/*.{flac,ape,mp3}'].each do |file|
-        ext = File.extname file
-        track_info = ext == '.flac' ? track_info_from_flac(file) : track_info_from_basic(file)
+        track_info = get_track_info(file)
 
         album_track = {number: track_info.number, title: track_info.title, file: track_info.file}
 
@@ -154,6 +153,18 @@ class CollectInfo < ATransaction
     cue_sheet.songs.map do |track|
       TrackInfo.new track[:performer], cue_sheet.title, nil, track[:track],
                     track[:title], cue_sheet.genre
+    end
+  end
+
+  def get_track_info(file)
+    # ext = File.extname file
+    # track_info = ext == '.flac' ? track_info_from_flac(file) : track_info_from_basic(file)
+
+    TagLib::FileRef.open(file) do |ref|
+      unless ref.null?
+        tag = ref.tag
+        TrackInfo.new tag.artist, tag.album, tag.year, tag.track, tag.title, tag.genre, file
+      end
     end
   end
 

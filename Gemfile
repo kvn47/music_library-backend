@@ -19,7 +19,7 @@ gem 'rack-cors'
 gem 'carrierwave'
 gem 'mini_magick', '~> 4.8'
 gem 'rubycue', github: 'kvn47/rubycue'
-gem 'taglib-ruby', group: :development
+gem 'taglib-ruby'
 gem 'httparty'
 gem 'hashie'
 
