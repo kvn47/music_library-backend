@@ -14,7 +14,7 @@ module Import
       Dir.chdir path
 
       input[:source_infos].each do |source_info|
-        if source_info.key? :cue
+        if source_info[:cue]
           prefix = "#{File.basename(source_info[:file], '.*')} - "
           split_file source_info[:file], source_info[:cue], prefix
 
