@@ -15,4 +15,5 @@ class API < Grape::API
   mount TracklistsAPI
   mount ExportListsAPI
   mount NotesAPI
+  mount MusicBrainzAPI
 end

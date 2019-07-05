@@ -19,8 +19,8 @@ class MusicBrainzClient
     Mash.new(response).metadata
   end
 
-  def release(mbid: nil, title: nil, artist: nil, **params)
-    return lookup_release(mbid, params) if mbid
+  def release(mb_id: nil, title: nil, artist: nil, **params)
+    return lookup_release(mb_id, params) if mb_id
 
     releases = search_release(title: title, artist: artist)
     return nil if releases.empty?
@@ -28,9 +28,9 @@ class MusicBrainzClient
     lookup_release(releases[0][:id], params)
   end
 
-  def lookup_release(mbid, **params)
-    # response = call("release/#{mbid}", params.merge(inc: 'recordings+work-level-rels+recording-rels+recording-level-rels'))
-    response = call("release/#{mbid}", params.merge(inc: 'recordings+recording-rels+release-rels+work-rels+artist-rels+recording-level-rels+work-level-rels'))
+  def lookup_release(mb_id, **params)
+    # response = call("release/#{mb_id}", params.merge(inc: 'recordings+work-level-rels+recording-rels+recording-level-rels'))
+    response = call("release/#{mb_id}", params.merge(inc: 'recordings+recording-rels+release-rels+work-rels+artist-rels+recording-level-rels+work-level-rels'))
     # recordings = call('recording', release: response[:release][:id], inc: 'artist-credits')
     # works = call('work', recording: 'afa019dd-30f0-4053-86e2-603e6ae3c46c', inc: 'aliases')
     parse_release response[:release]
@@ -41,11 +41,11 @@ class MusicBrainzClient
     extract_list result.release_list, :release
   end
 
-  def work(mbid: nil, title: nil, artist: nil, artist_mbid: nil, **params)
-    return lookup_work(mbid, params) if mbid
+  def work(mb_id: nil, title: nil, artist: nil, artist_mb_id: nil, **params)
+    return lookup_work(mb_id, params) if mb_id
 
-    works = if artist_mbid
-              search_work(alias: title, arid: artist_mbid, **params)
+    works = if artist_mb_id
+              search_work(alias: title, arid: artist_mb_id, **params)
             else
               search_work(work: title, artist: artist, **params)
             end
@@ -55,11 +55,11 @@ class MusicBrainzClient
     found_work = find_most_relevant_work(works, composer: artist)
     return if found_work.nil?
 
-    lookup_work(found_work[:mbid], params)
+    lookup_work(found_work[:mb_id], params)
   end
 
-  def lookup_work(mbid, **params)
-    result = call("work/#{mbid}", params.merge(inc: 'artist-rels+work-rels'))
+  def lookup_work(mb_id, **params)
+    result = call("work/#{mb_id}", params.merge(inc: 'artist-rels+work-rels'))
     work = parse_work(result[:work])
 
     if work[:parts].empty?
@@ -73,8 +73,8 @@ class MusicBrainzClient
     work
   end
 
-  # def browse_work(artist_mbid:, **params)
-  #   result = call('work', artist: artist_mbid, **params)
+  # def browse_work(artist_mb_id:, **params)
+  #   result = call('work', artist: artist_mb_id, **params)
   #   extract_list result.work_list, :work
   # end
 
@@ -84,8 +84,8 @@ class MusicBrainzClient
     extract_list result.work_list, :work
   end
 
-  def artist(mbid, **params)
-    call "artist/#{mbid}", params.merge(inc: 'recordings+releases+release-groups')
+  def artist(mb_id, **params)
+    call "artist/#{mb_id}", params.merge(inc: 'recordings+releases+release-groups')
   end
 
   def search_artist(name:)
@@ -93,8 +93,8 @@ class MusicBrainzClient
     extract_list result.artist_list, :artist
   end
 
-  def recording(mbid, **params)
-    call "recording/#{mbid}", params
+  def recording(mb_id, **params)
+    call "recording/#{mb_id}", params
   end
 
   private
@@ -235,7 +235,7 @@ class MusicBrainzClient
 
   def parse_work(mb_work)
     work = {
-      mbid: mb_work[:id],
+      mb_id: mb_work[:id],
       title: mb_work[:title],
       url: "https://musicbrainz.org/work/#{mb_work[:id]}"
     }

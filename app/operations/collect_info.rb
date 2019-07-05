@@ -38,6 +38,7 @@ class CollectInfo < ATransaction
             artist: cue_sheet.performer,
             album_artist: nil,
             title: cue_sheet.title,
+            year: cue_sheet.date,
             genre: cue_sheet.genre,
             cover: nil,
             tracks: tracks.map { |track| {number: track.number, title: track.title, cue_track: track.number} }
@@ -110,7 +111,7 @@ class CollectInfo < ATransaction
 
           new_album.merge! mb_title: work.title,
                            mb_date: work.composer&.end,
-                           mbid: work.id,
+                           mb_id: work.id,
                            mb_url: work.url,
                            mb_composer: work.composer.name,
                            mb_composer_id: work.composer.id,
@@ -125,7 +126,7 @@ class CollectInfo < ATransaction
               track.merge mb_title: work_part.title[/.* ([IVX]+\..*)/, 1],
                           number: work_part.number,
                           mb_length: work_part.track_length,
-                          mbid: work_part.id,
+                          mb_id: work_part.id,
                           mb_url: work_part.url
             else
               Rails.logger.error "[ERROR] Track not found! Work part: #{work_part.to_h}"

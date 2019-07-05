@@ -17,11 +17,11 @@ class Artist < ApplicationRecord
   has_many :tracks, through: :albums
   mount_uploader :image, ImageUploader
 
-  def self.query(search: nil, **)
+  def self.query(name: nil, **)
     artists = ordered
 
-    if search
-      search.chomp.split(/\s+/).each do |word|
+    if name
+      name.chomp.split(/\s+/).each do |word|
         artists = artists.where('LOWER(name) LIKE ?', "%#{word.mb_chars.downcase}%")
       end
     end

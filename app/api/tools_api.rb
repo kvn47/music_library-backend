@@ -15,23 +15,6 @@ class ToolsAPI < Grape::API
     end
   end
 
-  desc 'Find work info'
-  get 'find_work_info' do
-    run_operation FindWorkInfo do |m|
-      m.success { |result| present(result, with: WorkInfoPresenter) }
-      m.failure(&method(:present_error))
-    end
-  end
-
-  desc 'Search artist'
-  params do
-    requires :name, type: String
-  end
-  get 'search_artist' do
-    artists = MusicBrainzClient.new.search_artist(name: params[:name])
-    present artists
-  end
-
   desc 'Organize files'
   params do
     requires :path, type: String

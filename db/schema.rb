@@ -16,17 +16,17 @@ ActiveRecord::Schema.define(version: 2018_01_17_043512) do
   enable_extension "plpgsql"
 
   create_table "albums", force: :cascade do |t|
+    t.bigint "artist_id"
     t.string "title", null: false
     t.integer "year"
     t.string "path"
     t.string "cover"
-    t.bigint "artist_id"
     t.string "album_artist"
-    t.string "mbid"
+    t.string "mb_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["artist_id"], name: "index_albums_on_artist_id"
-    t.index ["mbid"], name: "index_albums_on_mbid"
+    t.index ["mb_id"], name: "index_albums_on_mb_id"
     t.index ["title"], name: "index_albums_on_title"
   end
 
@@ -34,10 +34,10 @@ ActiveRecord::Schema.define(version: 2018_01_17_043512) do
     t.string "name", null: false
     t.string "path"
     t.string "image"
-    t.string "mbid"
+    t.string "mb_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["mbid"], name: "index_artists_on_mbid"
+    t.index ["mb_id"], name: "index_artists_on_mb_id"
     t.index ["name"], name: "index_artists_on_name", unique: true
   end
 
@@ -84,11 +84,11 @@ ActiveRecord::Schema.define(version: 2018_01_17_043512) do
     t.string "path"
     t.integer "size"
     t.integer "length"
-    t.string "mbid"
+    t.string "mb_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["album_id"], name: "index_tracks_on_album_id"
-    t.index ["mbid"], name: "index_tracks_on_mbid"
+    t.index ["mb_id"], name: "index_tracks_on_mb_id"
   end
 
   create_table "tracks_exports", id: false, force: :cascade do |t|

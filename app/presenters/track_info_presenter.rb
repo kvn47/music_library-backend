@@ -4,6 +4,7 @@ class TrackInfoPresenter < Grape::Entity
   expose :cue_track
   expose :file
   expose :mb_length
-  expose :mbid
+  expose :mb_id
+  expose :mb_title
   expose :mb_url
 end

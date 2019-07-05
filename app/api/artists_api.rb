@@ -18,7 +18,7 @@ class ArtistsAPI < Grape::API
 
     desc 'Returns artists'
     params do
-      optional :search, type: String
+      optional :name, type: String
     end
     get do
       base_index_action

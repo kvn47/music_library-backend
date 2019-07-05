@@ -11,11 +11,15 @@ module Import
     private
 
     def artist!(input)
-      name = input[:artist]
       dst = MusicLibrary.config[:library_path]
+      artist_params = input[:artist]
 
-      artist = Artist.find_or_initialize_by(name: name) do |a|
-        a.path = File.join dst, a.name
+      artist = if artist_params[:id].present?
+        Artist.find artist_params[:id]
+      else
+        Artist.find_or_initialize_by(name: artist_params[:name]) do |a|
+          a.path = File.join(dst, a.name)
+        end
       end
 
       input.merge artist: artist

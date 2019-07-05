@@ -10,12 +10,12 @@ RSpec.describe MusicBrainzClient do
   end
 
   describe "#release" do
-    subject!(:response) { described_class.new.release(mbid: 'a04aa202-1a86-4b55-9072-d176550384c7') }
+    subject!(:response) { described_class.new.release(mb_id: 'a04aa202-1a86-4b55-9072-d176550384c7') }
     # subject!(:response) { described_class.new.release(artist: 'Marc-André Hamelin, London Philharmonic Orchestra, Vladimir Jurowski', title: 'Medtner & Rachmaninov: Piano Concertos') }
     # subject!(:response) { described_class.new.release(artist: 'Hilary Hahn', title: 'Brahms & Stravinsky Violin Concertos') }
 
     it 'returns release details' do
-      expect(response).to include(:mbid)
+      expect(response).to include(:mb_id)
     end
   end
 

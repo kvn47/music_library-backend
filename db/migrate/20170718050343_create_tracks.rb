@@ -7,7 +7,7 @@ class CreateTracks < ActiveRecord::Migration[5.1]
       t.string :path
       t.integer :size
       t.integer :length
-      t.string :mbid, index: true
+      t.string :mb_id, index: true
 
       t.timestamps
     end
