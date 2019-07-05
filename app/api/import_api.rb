@@ -29,7 +29,7 @@ class ImportAPI < Grape::API
   end
   post :import do
     Import::Perform.(params) do |r|
-      r.success(&method(:present_model))
+      r.success { |result| present(result) }
       r.failure(&method(:present_error))
     end
   end

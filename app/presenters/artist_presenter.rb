@@ -3,6 +3,7 @@ class ArtistPresenter < Grape::Entity
   expose :name
   expose :url
   expose :image_thumb_url
+  expose :mb_id
 
   private
 

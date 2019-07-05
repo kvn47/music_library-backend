@@ -1,4 +1,4 @@
-# require 'taglib'
+require 'taglib'
 require 'shellwords'
 
 module Import
@@ -18,7 +18,8 @@ module Import
         Artist.find artist_params[:id]
       else
         Artist.find_or_initialize_by(name: artist_params[:name]) do |a|
-          a.path = File.join(dst, a.name)
+          a.path = File.join(dst, a.name.sub(':', ''))
+          a.mb_id = artist_params[:mb_id]
         end
       end
 
@@ -35,7 +36,7 @@ module Import
 
       if album.nil?
         folder_name = year.nil? ? title : "#{title} (#{year})"
-        path = File.join(artist.path, folder_name)
+        path = File.join(artist.path, folder_name.sub(':', ''))
         Rails.logger.debug "FileUtils.mkdir_p(#{path})"
         FileUtils.mkdir_p path
         cover = copy_cover(input[:cover], path)
@@ -79,9 +80,8 @@ module Import
       ext = File.extname src_path
       number = format '%02d', track.number
       title = track.title.gsub(%r{[:\/]}, '.')
-      dst_path = File.join album.path, "#{number}. #{title}#{ext}"
+      dst_path = File.join album.path, "#{number}. #{title.sub(':', '')}#{ext}"
       Rails.logger.info "Copy #{src_path} to #{dst_path}"
-      # FileUtils.mkdir_p album.path
       FileUtils.copy_file src_path, dst_path
       track.path = dst_path
       update_tags track

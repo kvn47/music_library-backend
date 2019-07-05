@@ -46,11 +46,11 @@ module Import
 
       albums.each do |album_params|
         Rails.logger.debug "[albums_params] #{album_params}"
-        result = ProcessAlbum.new.(album_params.with_indifferent_access)
+        result = ProcessAlbum.new.(album_params)
 
         results.store album_params[:title],
                       result: result.success? ? 'success' : 'failure',
-                      message: result.value
+                      message: result.value!
       end
 
       FileUtils.rm_f splitted_files
