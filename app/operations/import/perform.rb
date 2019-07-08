@@ -9,7 +9,7 @@ module Import
 
     def prepare(input)
       albums = []
-      splitted_files = []
+      split_files = []
       path = input[:path]
       Dir.chdir path
 
@@ -22,7 +22,7 @@ module Import
             album[:tracks].collect! do |track|
               cue_track = format('%02d', track.delete(:cue_track))
               track[:path] = File.join path, "#{prefix + cue_track}.flac"
-              splitted_files << track[:path]
+              split_files << track[:path]
               track
             end
             albums << album
@@ -38,10 +38,10 @@ module Import
         end
       end
 
-      Success albums: albums, splitted_files: splitted_files
+      Success albums: albums, split_files: split_files
     end
 
-    def process(albums:, splitted_files:, **)
+    def process(albums:, split_files:, **)
       results = {}
 
       albums.each do |album_params|
@@ -53,7 +53,7 @@ module Import
                       message: result.value!
       end
 
-      FileUtils.rm_f splitted_files
+      FileUtils.rm_f split_files
 
       results
     end

@@ -28,6 +28,7 @@ class CollectInfo < ATransaction
       cue_sheet = RubyCue::Cuesheet.new(File.read(cue_file))
       cue_sheet.parse!
       tracks = track_infos_from_cue(cue_sheet)
+                 .map { |track| {number: track.number, title: track.title, cue_track: track.number} }
 
       source_infos << {
         cue: cue_file,
@@ -41,7 +42,7 @@ class CollectInfo < ATransaction
             year: cue_sheet.date,
             genre: cue_sheet.genre,
             cover: nil,
-            tracks: tracks.map { |track| {number: track.number, title: track.title, cue_track: track.number} }
+            tracks: tracks
           }
         ]
       }
@@ -50,7 +51,7 @@ class CollectInfo < ATransaction
     if source_infos.empty?
       albums = {}
 
-      Dir['**/*.{flac,ape,mp3}'].each do |file|
+      Dir['**/*.{flac,ape,dsf,mp3}'].each do |file|
         track_info = get_track_info(file)
 
         album_track = {number: track_info.number, title: track_info.title, file: track_info.file}
@@ -70,6 +71,10 @@ class CollectInfo < ATransaction
 
           albums.store(album[:title], album)
         end
+      end
+
+      albums.values.each do |album|
+        album[:tracks].sort_by! { |track| track[:number] }
       end
 
       source_infos << {
@@ -161,7 +166,11 @@ class CollectInfo < ATransaction
     # track_info = ext == '.flac' ? track_info_from_flac(file) : track_info_from_basic(file)
 
     TagLib::FileRef.open(file) do |ref|
-      unless ref.null?
+      if ref.null?
+        reg = /^(?<number>\d{2})\s?-\s?(?<title>.+)\.\w{3,4}$/
+        match = file.match(reg)
+        TrackInfo.new nil, nil, nil, match[:number].to_i, match[:title], nil, file
+      else
         tag = ref.tag
         TrackInfo.new tag.artist, tag.album, tag.year, tag.track, tag.title, tag.genre, file
       end
