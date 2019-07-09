@@ -50,10 +50,20 @@ module Import
 
     def tracks!(input)
       album = input['album']
+      album.tracks.clear
 
-      input['tracks'].each do |track_params|
-        track = copy_track(track_params, album)
-        album.tracks << track
+      album.tracks = input['tracks'].map do |track_params|
+        track = Track.new album: album, number: track_params[:number], title: track_params[:title]
+        src_path = track_params[:path]
+        ext = File.extname src_path
+        number = format '%02d', track.number
+        title = track.title.gsub(%r{[:\/]}, '.')
+        dst_path = File.join album.path, "#{number}. #{title.sub(':', '')}#{ext}"
+        Rails.logger.info "Copy #{src_path} to #{dst_path}"
+        FileUtils.copy_file src_path, dst_path
+        track.path = dst_path
+        update_tags track
+        track
       end
 
       album

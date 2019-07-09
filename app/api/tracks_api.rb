@@ -20,6 +20,7 @@ class TracksAPI < Grape::API
 
     desc 'Returns tracks'
     params do
+      optional :album_id, type: Integer
       optional :search, type: String
     end
     get do

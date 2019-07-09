@@ -1,19 +1,13 @@
 class TrackPresenter < Grape::Entity
+  include ActiveSupport::NumberHelper
+
   expose :id
   expose :title
   expose :number
-  expose :size
-  expose :artist_name
-
-  private
-
-  include ActiveSupport::NumberHelper
-
-  def size
-    number_to_human_size represented.size
+  expose :size do |track, _|
+    number_to_human_size(track.size)
   end
-
-  def artist_name
-    object.artist.name
+  expose :artist_name do |track, _|
+    track.artist.name
   end
 end
