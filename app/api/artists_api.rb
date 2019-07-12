@@ -1,16 +1,10 @@
 class ArtistsAPI < Grape::API
   namespace_inheritable :model_class, Artist
 
-  helpers do
-    params :artist_params do
-      requires :name, type: String
-    end
-  end
-
   resource :artists do
     desc 'Creates artist'
     params do
-      use :artist_params
+      requires :name, type: String
     end
     post do
       base_create_action
@@ -32,9 +26,10 @@ class ArtistsAPI < Grape::API
 
       desc 'Updates artist'
       params do
-        use :artist_params
+        optional :name, type: String
+        optional :mb_id, type: String
       end
-      patch do
+      put do
         base_update_action
       end
 
