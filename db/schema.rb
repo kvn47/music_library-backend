@@ -95,6 +95,7 @@ ActiveRecord::Schema.define(version: 2018_01_17_043512) do
     t.bigint "export_list_id"
     t.bigint "track_id"
     t.index ["export_list_id"], name: "index_tracks_exports_on_export_list_id"
+    t.index ["track_id", "export_list_id"], name: "index_tracks_exports_on_track_id_and_export_list_id", unique: true
     t.index ["track_id"], name: "index_tracks_exports_on_track_id"
   end
 

@@ -1,8 +1,8 @@
-# require 'taglib'
+require 'taglib'
 require 'fileutils'
 require 'shellwords'
 
-class OrganizeAlbumFiles < ATransaction
+class OrganizeFiles < ATransaction
   tee :process
 
   private

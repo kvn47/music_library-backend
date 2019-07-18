@@ -31,6 +31,9 @@ mv /usr/local/bin/cuetag.sh /usr/local/bin/cuetag
 
 Change METAFLAC in the /usr/local/bin/cuetag to: METAFLAC="metaflac --import-tags-from=-"
 
+brew tap fernandotcl/homebrew-fernandotcl
+brew install monkeys-audio
+
 **Ubuntu**
 
 apt-get install cuetools shntool flac libtag1-dev

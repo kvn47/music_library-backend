@@ -62,7 +62,7 @@ module ActionsHelpers
 
   def present_error(error, status: nil)
     status ||= 400
-    error!({message: error}, status)
+    error!({error: error}, status)
   end
 
   def present_model_errors(model)

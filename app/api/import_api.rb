@@ -28,8 +28,8 @@ class ImportAPI < Grape::API
     end
   end
   post :import do
-    Import::Perform.(params) do |r|
-      r.success { |result| present(result) }
+    ImportMusic.(params) do |r|
+      r.success(&method(:present))
       r.failure(&method(:present_error))
     end
   end

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Import::Auto, :import do
+RSpec.describe AutoImport, :import do
   subject(:result) { described_class.new.(path: path) }
 
   context 'one album separate flac files' do

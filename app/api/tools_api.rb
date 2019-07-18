@@ -31,7 +31,7 @@ class ToolsAPI < Grape::API
     # end
   end
   post 'organize_files' do
-    run_operation OrganizeAlbumFiles do |m|
+    run_operation OrganizeFiles do |m|
       m.success { |_| status(:ok) }
       m.failure(&method(:present_error))
     end

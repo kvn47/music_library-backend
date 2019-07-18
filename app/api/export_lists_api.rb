@@ -46,11 +46,20 @@ class ExportListsAPI < Grape::API
       end
 
       desc 'Adds tracks to export_list'
+      params do
+        optional :artist_id, type: Integer
+        optional :album_id, type: Integer
+        optional :track_id, types: [Integer, Array[Integer]]
+        exactly_one_of :artist_id, :album_id, :track_id
+      end
       post :add_tracks do
         run_operation ExportList::AddTracks
       end
 
       desc 'Removes track from export_list'
+      params do
+        requires :track_id, type: Integer
+      end
       put :remove_track do
         run_operation ExportList::RemoveTrack
       end

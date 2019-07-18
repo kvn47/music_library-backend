@@ -1,5 +1,4 @@
-desc 'Structure album'
-task :organize_album, [:path] => [:environment] do |t, args|
-  OrganizeAlbumFiles.(path: args.path)
-
+desc 'Organize music files'
+task :organize_files, [:path] => [:environment] do |t, args|
+  OrganizeFiles.(path: args.path)
 end

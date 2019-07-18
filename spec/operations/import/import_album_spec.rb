@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Import::ProcessAlbum, :import do
+RSpec.describe ImportAlbum, :import do
   subject(:result) { described_class.new.(import_params) }
 
   let(:path) { import_path('TesseracT - Sonder - 2018') }
