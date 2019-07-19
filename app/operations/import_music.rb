@@ -20,7 +20,7 @@ class ImportMusic < ATransaction
         source_info[:albums].each do |album|
           album[:tracks].collect! do |track|
             cue_track = format('%02d', track.delete(:cue_track))
-            track[:path] = File.join path, "#{prefix + cue_track}.flac"
+            track[:path] = File.join(path, "#{prefix + cue_track}.flac")
             track_files << track[:path]
             track
           end
@@ -29,7 +29,7 @@ class ImportMusic < ATransaction
       else
         source_info[:albums].each do |album|
           album[:tracks].collect! do |track|
-            track[:path] = File.join path, track[:file]
+            track[:path] = File.join(path, track[:file])
             track
           end
           albums << album
@@ -62,7 +62,19 @@ class ImportMusic < ATransaction
     cue_file = Shellwords.escape(cue_file)
     file = Shellwords.escape(file)
 
-    `shnsplit -f #{cue_file} -a #{prefix} -o flac -O always #{file}`
+    # TODO
+    # ActionCable.server.broadcast 'logs', "Splitting file #{file}"
+    #
+    # thread = Thread.new do
+    #   loop do
+    #     ActionCable.server.broadcast 'logs', STDOUT
+    #   end
+    #   # LogsChannel.broadcast_to('logs', 'STDOUT')
+    # end
+    #
+    system("shnsplit -f #{cue_file} -a #{prefix} -o flac -O always #{file}")
+    # thread.exit
+
     # `cuebreakpoints #{cue_file} | shnsplit -f #{cue_file} -a #{prefix} -o flac -O always #{file_name}`
 
     # Creating tag metadata

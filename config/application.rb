@@ -41,5 +41,10 @@ module MusicLibrary
 
     # action_controller.parameters_config
     config.action_controller.permit_all_parameters
+
+    config.action_cable.log_tags = [
+      :action_cable,
+      -> request { request.uuid }
+    ]
   end
 end
