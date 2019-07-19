@@ -17,7 +17,7 @@ gem 'rack-cors'
 # gem 'redis', '~> 4.0'
 
 gem 'carrierwave'
-gem 'mini_magick', '~> 4.8'
+gem 'mini_magick', '~> 4.9'
 gem 'rubycue', github: 'kvn47/rubycue'
 gem 'taglib-ruby'
 gem 'httparty'
