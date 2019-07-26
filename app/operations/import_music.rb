@@ -1,6 +1,8 @@
 require 'shellwords'
 
 class ImportMusic < ATransaction
+  include BroadcastLogs
+
   step :prepare
   map :process
 
@@ -62,18 +64,7 @@ class ImportMusic < ATransaction
     cue_file = Shellwords.escape(cue_file)
     file = Shellwords.escape(file)
 
-    # TODO
-    # ActionCable.server.broadcast 'logs', "Splitting file #{file}"
-    #
-    # thread = Thread.new do
-    #   loop do
-    #     ActionCable.server.broadcast 'logs', STDOUT
-    #   end
-    #   # LogsChannel.broadcast_to('logs', 'STDOUT')
-    # end
-    #
-    system("shnsplit -f #{cue_file} -a #{prefix} -o flac -O always #{file}")
-    # thread.exit
+    exec_command_with_progress("shnsplit -f #{cue_file} -a #{prefix} -o flac -O always #{file}")
 
     # `cuebreakpoints #{cue_file} | shnsplit -f #{cue_file} -a #{prefix} -o flac -O always #{file_name}`
 
