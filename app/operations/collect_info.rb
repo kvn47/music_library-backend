@@ -20,6 +20,8 @@ class CollectInfo < ATransaction
     source_infos = []
     path = input[:path]
     Dir.chdir path
+    images = find_images(path)
+    cover = suggested_cover(images)
 
     Dir['**/*.cue'].each do |cue_file|
       file = Dir["#{cue_file.gsub('cue', '')}{flac,ape}"][0]
@@ -33,7 +35,7 @@ class CollectInfo < ATransaction
       source_infos << {
         cue: cue_file,
         file: file,
-        images: find_images(path),
+        images: images,
         albums: [
           {
             artist: cue_sheet.performer,
@@ -41,7 +43,7 @@ class CollectInfo < ATransaction
             title: cue_sheet.title,
             year: cue_sheet.date,
             genre: cue_sheet.genre,
-            cover: nil,
+            cover: cover,
             tracks: tracks
           }
         ]
@@ -65,7 +67,7 @@ class CollectInfo < ATransaction
             album_artist: nil,
             genre: track_info.genre,
             year: track_info.year,
-            cover: nil,
+            cover: cover,
             tracks: [album_track]
           }
 
@@ -78,7 +80,7 @@ class CollectInfo < ATransaction
       end
 
       source_infos << {
-        images: find_images(path),
+        images: images,
         albums: albums.values
       }
     end
@@ -152,6 +154,13 @@ class CollectInfo < ATransaction
 
   def find_images(path)
     Dir.glob('*.{jpg,jpeg,png}', base: path)
+  end
+
+  def suggested_cover(images)
+    images.find(images[0]) do |image|
+      name = File.basename(image, '.*').downcase
+      name == 'cover' || name == 'front' || name == 'folder'
+    end
   end
 
   def track_infos_from_cue(cue_sheet)
