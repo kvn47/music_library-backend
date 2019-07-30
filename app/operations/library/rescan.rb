@@ -1,7 +1,8 @@
 module Library
   class Rescan < AnOperation
     TRACK_REGEXP = /^(?<number>\d+)(. | - )(?<title>.+)\.(?<type>(flac|ape))\z/
-    ALBUM_REGEXP = /^(?<year>\d+) - (?<title>.+)\z/
+    # ALBUM_REGEXP = /^(?<title>.+) (?:\[(?<album_artist>\d+)\] )?\((?<year>\d+)\)\z/
+    ALBUM_REGEXP = /^(?<title>.+) \((?<year>\d+)\)\z/
     IMAGE_REGEXP = /.+\.(jpg|jpeg|png)/
 
     def call(**)
@@ -45,12 +46,14 @@ module Library
       full_path = File.join artist.path, dir_name
       attributes = {path: full_path}
       match = ALBUM_REGEXP.match dir_name
+
       if match.nil?
         attributes[:title] = dir_name
       else
         attributes[:title] = match[:title]
         attributes[:year] = match[:year]
       end
+
       image = find_image full_path
       attributes[:cover] = image unless image.nil?
       album = Album.find_or_create_by(artist: artist, title: attributes[:title])
@@ -61,6 +64,7 @@ module Library
     def save_track(album, file_name)
       match = TRACK_REGEXP.match file_name
       return if match.nil?
+
       full_path = File.join album.path, file_name
       size = File.new(full_path).size
       track = Track.create_with(number: match[:number], size: size).find_or_create_by!(album: album, title: match[:title])

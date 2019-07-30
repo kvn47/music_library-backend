@@ -34,8 +34,8 @@ class ImportAlbum < ATransaction
     album = Album.find_by(title: title, artist_id: artist.id)
 
     if album.nil?
-      folder_name = year.nil? ? title : "#{title} (#{year})"
-      path = File.join(artist.path, folder_name.sub(':', ''))
+      dir = title.sub(':', '')
+      path = File.join(artist.path, dir)
       Rails.logger.debug "FileUtils.mkdir_p(#{path})"
       FileUtils.mkdir_p path
       cover = copy_cover(input[:cover], path)
@@ -109,5 +109,4 @@ class ImportAlbum < ATransaction
       end
     end
   end
-
 end
