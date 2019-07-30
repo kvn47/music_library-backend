@@ -5,7 +5,7 @@ class GetTrackInfo
 
   def call(file_path)
     info = TrackInfo.new
-    info.file = file_path
+    info.path = file_path
 
     TagLib::FileRef.open(file_path) do |ref|
       if ref.null?
@@ -28,4 +28,24 @@ class GetTrackInfo
 
     info
   end
+
+  private
+
+  # def track_info_from_flac(file)
+  #   TagLib::FLAC::File.open(file) do |ref|
+  #     tag = ref.xiph_comment || ref.tag
+  #     unless tag.nil?
+  #       TrackInfo.new tag.artist, tag.album, tag.year, tag.track, tag.title, tag.genre, file
+  #     end
+  #   end
+  # end
+
+  # def track_info_from_basic(file)
+  #   TagLib::FileRef.open(file) do |ref|
+  #     unless ref.null?
+  #       tag = ref.tag
+  #       TrackInfo.new tag.artist, tag.album, tag.year, tag.track, tag.title, tag.genre, file
+  #     end
+  #   end
+  # end
 end

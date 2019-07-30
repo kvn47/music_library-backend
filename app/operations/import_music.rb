@@ -22,7 +22,7 @@ class ImportMusic < ATransaction
         source_info[:albums].each do |album|
           album[:tracks].collect! do |track|
             cue_track = format('%02d', track.delete(:cue_track))
-            track[:path] = File.join(path, "#{prefix + cue_track}.flac")
+            track[:path] = "#{prefix + cue_track}.flac"
             track_files << track[:path]
             track
           end
@@ -31,7 +31,7 @@ class ImportMusic < ATransaction
       else
         source_info[:albums].each do |album|
           album[:tracks].collect! do |track|
-            track[:path] = File.join(path, track[:file])
+            track[:path] = track[:file]
             track
           end
           albums << album

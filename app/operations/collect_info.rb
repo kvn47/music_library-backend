@@ -9,9 +9,6 @@ class CollectInfo < ATransaction
 
   private
 
-  AlbumInfo = Struct.new :artist, :title, :year, :cover, :tracks
-  TrackInfo = Struct.new :artist, :album, :year, :number, :title, :genre, :file
-
   def validate(path:, **)
     Dir.exist? path
   end
@@ -54,7 +51,8 @@ class CollectInfo < ATransaction
       albums = {}
 
       Dir['**/*.{flac,ape,dsf,mp3}'].each do |file|
-        track_info = get_track_info(file)
+        file_path = File.join(path, file)
+        track_info = GetTrackInfo.(file_path)
 
         album_track = {number: track_info.number, title: track_info.title, file: track_info.file}
 
@@ -165,42 +163,12 @@ class CollectInfo < ATransaction
 
   def track_infos_from_cue(cue_sheet)
     cue_sheet.songs.map do |track|
-      TrackInfo.new track[:performer], cue_sheet.title, nil, track[:track],
-                    track[:title], cue_sheet.genre
-    end
-  end
-
-  def get_track_info(file)
-    # ext = File.extname file
-    # track_info = ext == '.flac' ? track_info_from_flac(file) : track_info_from_basic(file)
-
-    TagLib::FileRef.open(file) do |ref|
-      if ref.null?
-        reg = /^(?<number>\d{2})\s?-\s?(?<title>.+)\.\w{3,4}$/
-        match = file.match(reg)
-        TrackInfo.new nil, nil, nil, match[:number].to_i, match[:title], nil, file
-      else
-        tag = ref.tag
-        TrackInfo.new tag.artist, tag.album, tag.year, tag.track, tag.title, tag.genre, file
-      end
-    end
-  end
-
-  def track_info_from_flac(file)
-    TagLib::FLAC::File.open(file) do |ref|
-      tag = ref.xiph_comment || ref.tag
-      unless tag.nil?
-        TrackInfo.new tag.artist, tag.album, tag.year, tag.track, tag.title, tag.genre, file
-      end
-    end
-  end
-
-  def track_info_from_basic(file)
-    TagLib::FileRef.open(file) do |ref|
-      unless ref.null?
-        tag = ref.tag
-        TrackInfo.new tag.artist, tag.album, tag.year, tag.track, tag.title, tag.genre, file
-      end
+      TrackInfo.new number: track[:track],
+                    title: track[:title],
+                    artist: track[:performer],
+                    album: cue_sheet.title,
+                    genre: cue_sheet.genre,
+                    year: cue_sheet.year
     end
   end
 end
