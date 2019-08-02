@@ -48,13 +48,6 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    anycable (0.6.3)
-      anyway_config (~> 1.4.2)
-      grpc (~> 1.17)
-    anycable-rails (0.6.4)
-      anycable (~> 0.6.0)
-      rails (>= 5)
-    anyway_config (1.4.4)
     arel (9.0.0)
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
@@ -130,9 +123,6 @@ GEM
     ffi (1.10.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    google-protobuf (3.9.0)
-    googleapis-common-protos-types (1.0.4)
-      google-protobuf (~> 3.0)
     grape (1.2.3)
       activesupport
       builder
@@ -146,9 +136,6 @@ GEM
     grape-entity-matchers (1.2.0)
       grape-entity (= 0.4.8)
       rspec (>= 3.2.0)
-    grpc (1.22.0)
-      google-protobuf (~> 3.8)
-      googleapis-common-protos-types (~> 1.0)
     hashie (3.6.0)
     httparty (0.16.3)
       mime-types (~> 3.0)
@@ -278,7 +265,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  anycable-rails
   bootsnap (>= 1.1.0)
   byebug
   carrierwave
