@@ -168,7 +168,7 @@ class CollectInfo < ATransaction
                     artist: track[:performer],
                     album: cue_sheet.title,
                     genre: cue_sheet.genre,
-                    year: cue_sheet.year
+                    year: cue_sheet.date
     end
   end
 end
