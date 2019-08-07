@@ -9,7 +9,11 @@ development:
   <<: *defaults
 
 production:
-  <<: *defaults
+  library_path: <%= ENV['MUSIC_LIBRARY'] %>
+  import_sources:
+    - '/home/v/downloads'
+    - '/media/MUSIC'
+    - '/media/MUSIC2'
 
 test:
   <<: *defaults
