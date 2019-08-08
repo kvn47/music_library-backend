@@ -9,7 +9,8 @@ development:
 production:
   library_path: <%= ENV['MUSIC_LIBRARY'] %>
   import_sources:
-    - 'fs'
+    - 'media'
+    - 'mnt'
 
 test:
   <<: *defaults
