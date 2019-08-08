@@ -1,9 +1,7 @@
 defaults: &defaults
   library_path: '/Users/vova/Music/_'
   import_sources:
-    - '/Users/vova/Downloads'
-    - '/Volumes/MUSIC'
-    - '/Volumes/MUSIC2'
+    - 'fs'
 
 development:
   <<: *defaults
@@ -11,9 +9,7 @@ development:
 production:
   library_path: <%= ENV['MUSIC_LIBRARY'] %>
   import_sources:
-    - '/home/v/downloads'
-    - '/media/MUSIC'
-    - '/media/MUSIC2'
+    - 'fs'
 
 test:
   <<: *defaults
