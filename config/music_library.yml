@@ -9,8 +9,8 @@ development:
 production:
   library_path: <%= ENV['MUSIC_LIBRARY'] %>
   import_sources:
-    - 'media'
-    - 'mnt'
+    - '/media'
+    - '/mnt'
 
 test:
   <<: *defaults
