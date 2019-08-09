@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.6f2548a40ee7985752f60ea5bc46bf21.js"
+  "/precache-manifest.c2564c600c2b5ebf39f7d2c921c6757e.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "music_library"});
