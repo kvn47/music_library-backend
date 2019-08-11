@@ -54,7 +54,7 @@ class CollectInfo < ATransaction
         file_path = File.join(path, file)
         track_info = GetTrackInfo.(file_path)
 
-        album_track = {number: track_info.number, title: track_info.title, file: track_info.file}
+        album_track = {number: track_info.number, title: track_info.title, file: track_info.path}
 
         if albums.key?(track_info.album)
           albums[track_info.album][:tracks] << album_track
@@ -124,9 +124,8 @@ class CollectInfo < ATransaction
 
           tracks = work.parts.map do |work_part|
             track_index = album[:tracks].index { |t| t[:number] == work_part.track_number }
-            track = album[:tracks].delete_at(track_index) if track_index
 
-            if track
+            if track_index && (track = album[:tracks].delete_at(track_index))
               track.merge mb_title: work_part.title[/.* ([IVX]+\..*)/, 1],
                           number: work_part.number,
                           mb_length: work_part.track_length,
@@ -155,10 +154,10 @@ class CollectInfo < ATransaction
   end
 
   def suggested_cover(images)
-    images.find(images[0]) do |image|
+    images.find do |image|
       name = File.basename(image, '.*').downcase
       name == 'cover' || name == 'front' || name == 'folder'
-    end
+    end || images.first
   end
 
   def track_infos_from_cue(cue_sheet)
