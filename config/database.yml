@@ -23,6 +23,3 @@ test:
 production:
   <<: *default
   database: music_library
-
-remote:
-  url: '<%= ENV.fetch("REMOTE_DATABASE_URL") %>'
